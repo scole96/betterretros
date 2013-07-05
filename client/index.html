@@ -1,0 +1,313 @@
+<head>  
+  <title>Beter Retrospectives</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"/>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.5/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.5/bootstrap-editable/js/bootstrap-editable.min.js"></script>
+</head>
+
+<body>
+  <div class="container-fluid">
+    {{#if currentUser}}
+      {{> header }}
+      {{> main_body }}
+    {{else}}
+      {{>signup}}
+    {{/if}}
+    {{> footer }}
+  </div>
+</body>
+
+<template name="signup">
+  {{loginButtons}}
+  You have to log in to play!
+</template>
+
+<template name="header">
+  <div class="row-fluid">
+    <div class="span10 headerSelect">
+      {{>team}}
+      {{>selection}}
+    </div>
+    <div class="pull-right">
+      {{loginButtons align="right"}}
+    </div>
+  </div>
+</template>
+
+<template name="main_body">
+  {{{main}}}
+</template>
+
+<template name="selection">
+  <ul class="nav pull-left">
+    <li class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown" >
+        {{currentRetroName}}<b class="caret"></b>
+      </a>
+      <ul class="dropdown-menu">
+        {{#each retros}}
+          <li><a class="retroLink" data-id="{{_id}}" href="#">{{name}}</a></li>
+        {{/each}}
+        <li class="divider"><li>
+        {{#if getCurrentRetroName}}
+          <li><a href="#retroModal" data-toggle="modal">Edit {{getCurrentRetroName}}</a></li>
+          <li><a class="deleteRetro" href="#">Delete {{getCurrentRetroName}}</a></li>
+        {{/if}}
+        {{#if currentUser.rights.leader}}
+          <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
+        {{/if}}
+      </ul>
+    </li>
+  </ul>
+  <div id="retroModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="retro-modal-label" aria-hidden="true">
+    <div class="modal-header">
+      <h3>Retrospective</h3>
+    </div>    
+    <form id="retroForm">
+      <div class="modal-body">
+        {{>meteorMessages}}
+        <label class="control-label" for="retroTitle">Title<span class="required">*</span></label>
+        <input type="text" id="retroTitle"  class="input-xlarge" value="{{getCurrentRetroName}}" required/>
+      </div>
+      <div class="modal-footer">
+        <a data-dismiss="modal" aria-hidden="true">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="newRetroModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="new-retro-modal-label" aria-hidden="true">
+    <div class="modal-header">
+      <h3>New Retrospective</h3>
+    </div>    
+    <form id="newRetroForm">
+      <div class="modal-body">
+        {{>meteorMessages}}
+        <label class="control-label" for="newRetroTitle">Title<span class="required">*</span></label>
+        <input type="text" id="newRetroTitle"  class="input-xlarge" value="" required/>
+      </div>
+      <div class="modal-footer">
+        <a data-dismiss="modal" aria-hidden="true">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <ul class="nav pull-left">
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        {{currentActivity}}<b class="caret"></b>
+      </a>
+      <ul class="dropdown-menu">
+        {{#each activities}}
+          <li><a class="activityLink" data-id="{{_id}}" href="#">{{name}}</a></li>
+        {{/each}}
+        <li class="divider"><li>
+        {{#if getCurrentActivityName}}
+          <li><a href="#activityModal" data-toggle="modal">Edit {{getCurrentActivityName}}</a></li>
+          <li><a class="deleteActivity" href="#">Delete {{getCurrentActivityName}}</a></li>
+        {{/if}}
+        {{#if getCurrentRetroName}}
+          {{#if isRetroLeader}}
+            <li><a href="#newActivityModal" data-toggle="modal">New Activity</a></li>
+          {{/if}}
+        {{/if}}
+      </ul>
+    </li>
+  </ul> 
+
+  <div id="newActivityModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="newActivity-modal-label" aria-hidden="true">
+    <div class="modal-header">
+      <h3>New Activity</h3>
+    </div>
+    <form id="newActivityForm">
+      <div class="modal-body">
+        {{>meteorMessages}}
+        <label class="control-label" for="newActivityTitle">Activity Type<span class="required">*</span></label>
+        <input type="text" id="newActivityTitle"  class="input-xlarge" required/>
+        <label class="control-label" for="newActivityType">Title<span class="required">*</span></label>
+        <select id="newActivityType">
+          <option value="madsSadsGlads">Mads, Sads, Glads</option>
+          <option value="plusesDeltas">Pluses and Deltas</option>
+          <option value="fiveWhys">5 Whys</option>
+          <option value="rootCause">Root Cause Analysis</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <a data-dismiss="modal" aria-hidden="true">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+
+  {{#with activity}}
+    <div id="activityModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="activity-modal-label" aria-hidden="true">
+      <div class="modal-header">
+        <h3>Edit Activity</h3>
+      </div>
+      <form id="activityForm">
+        <div class="modal-body">
+          {{>meteorMessages}}
+          <label class="control-label" for="activityTitle">Title<span class="required">*</span></label>
+          <input type="text" id="activityTitle"  class="input-xlarge" value="{{name}}" required/>
+        </div>
+        <div class="modal-footer">
+          <a data-dismiss="modal" aria-hidden="true">Cancel</a>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  {{/with}}
+</template>
+
+<template name="team">
+  {{#with current}}
+    <ul class="nav pull-left">
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown">
+          {{name}}<b class="caret"></b>
+        </a> 
+        <ul class="dropdown-menu">
+          {{#if userHasMultipleTeams}}
+            <li class="usermenu-submenu">Teams:
+              <ul class="unstyled submenu" style="padding-left:20px">
+                {{#each usersTeams}}
+                  <li>
+                    <a class="teamRadio" data-teamId="{{_id}}" data-teamName="{{name}}">
+                      <input type="radio" value="{{_id}}" {{isCurrentTeamId _id}} />
+                      {{name}}
+                    </a>
+                  </li>
+                {{/each}}
+              </ul>
+            </li>
+            <li class="divider"><li>
+          {{/if}}
+          {{#if isOwner}}
+            <li><a id="editTeam">Manage {{name}}</a></li>
+            {{#if userHasMultipleTeams}}
+              <li><a id="deleteeam">Delete {{name}}</a></li>
+            {{/if}}
+          {{/if}}
+          <li><a id="createTeam">Create New Team</a></li>
+          {{#if currentUser.rights.admin}}
+            <li><a id="admin_link" href="/admin">Administration</a></li>
+
+          {{/if}}
+        </ul>
+      </li>
+    </ul>
+  {{/with}}
+</template>
+
+<template name="teamManagement">
+  {{#with current}}
+    <div class="">
+      <div class="">
+        <h3><a href="#" id="teamName" class="editable" data-type="text" data-pk="{{_id}}">{{name}} <i class="icon-pencil"></i></a></h3>
+      </div>    
+      <div class="">
+        <div class="span6">
+          <h4>Current Members:</h4>
+          <ul>
+            {{#each teamMembers}}
+              <li>{{profile.name}} - {{services.google.email}}</li>
+            {{/each}}
+          </ul>
+        </div>
+        <div class="span6">
+          <h4>Open Invitations:</h4>
+            <ul>
+              {{#each invites}}
+                <li>{{this}}</li>
+              {{/each}}
+          </ul>
+        </div>
+        <div class="span12">
+          <h4>Invite someone</h4>
+          <form id="addMember">
+            <input type="text" id="newMember"  class="input-xlarge"/>
+          </form>
+        </div>
+      </div>
+    </div>
+  {{/with}}
+</template>
+
+<template name="main">
+  {{#with activity}}
+    {{{ShowActivity this}}}
+  {{/with}}
+</template>
+
+<template name="madsSadsGlads">
+  Mads, Sads, Glads
+</template>
+
+<template name="plusesDeltas">
+  <div class="row-fluid">
+    {{#if isRetroLeader}}
+      <span class="pull-right">
+        <label class="checkbox">
+          Voting on?<input type="checkbox" id="votingToggle" {{#if isVoting}}checked{{/if}}>
+        </label>
+      </span>
+    {{/if}}
+    <h3>Pluses and Deltas</h3>
+  </div>
+  <div class="row-fluid">
+    <div id="plusesDiv" class="span6 well well-large">
+      <h4>Pluses</h4>
+      <ul class="unstyled">
+        {{#each pluses}}
+          <li><a class="activityItem editable" data-pk="{{_id}}" data-activity-type="1" data-type="text" data-inputclass="input-large">{{name}}</a>
+            <span class="ai-delete pull-right"><a class="delete-activity" data-pk="{{_id}}"><i class="icon-trash" data-pk="{{_id}}"></i></a></span>
+            {{#if isVoting}}
+              <span class="pull-right ai-vote">{{#if votes}} +{{votes.length}} {{/if}}<a class="vote-activity" data-pk="{{_id}}"><i class="icon-thumbs-up-alt" data-pk="{{_id}}"></i></a></span>
+            {{/if}}
+          </li>
+        {{/each}}
+        </li>
+      </ul>
+      <span class="editable-container editable-inline" id="newActivityInput-1">
+        <form class="newActivityItemForm form-inline editableform">
+          <div class="control-group">
+             <input type="text" class="input-large" style="padding-right: 24px;" data-activity-type="1">
+          </div>
+        </form>
+      </span>
+    </div>
+    <div id="deltaDiv" class="span6 well well-large">
+      <h4>Deltas</h4>
+      <ul class="unstyled">
+        {{#each deltas}}
+          <li><a class="activityItem editable" data-pk="{{_id}}" data-activity-type="2" data-type="text" data-inputclass="input-large">{{name}}</a>
+            <span class="ai-delete pull-right"><a class="delete-activity" data-pk="{{_id}}"><i class="icon-trash" data-pk="{{_id}}"></i></a></span>
+            {{#if isVoting}}
+              <span class="pull-right ai-vote">{{#if votes}} +{{votes.length}} {{/if}}<a class="vote-activity" data-pk="{{_id}}"><i class="icon-thumbs-up-alt" data-pk="{{_id}}"></i></a></span>
+            {{/if}}
+          </li>
+        {{/each}}
+      </ul>
+      <span class="editable-container editable-inline" id="newActivityInput-2">
+        <form class="newActivityItemForm form-inline editableform">
+          <div class="control-group">
+             <input type="text" class="input-large" style="padding-right: 24px;" data-activity-type="2">
+          </div>
+        </form>
+      </span>
+    </div>
+</template>
+
+<template name="fiveWhys">
+  Five Whys
+</template>
+
+<template name="rootCause">
+  Root Cause Analysis
+</template>
+
+<template name="footer">
+
+</template>

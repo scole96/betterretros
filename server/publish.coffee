@@ -1,0 +1,76 @@
+@Teams = new Meteor.Collection("teams")
+Meteor.publish('teams', () -> 
+  Teams.find()
+)
+
+@Retros = new Meteor.Collection("retros")
+Meteor.publish('retros', (teams) -> 
+  Retros.find({team_id: {$in: teams}})
+)
+
+@Activities = new Meteor.Collection("activities")
+Meteor.publish('activities', (retro_id) ->
+  Activities.find({retro_id: retro_id})
+)
+
+@ActivityItems = new Meteor.Collection("activityItems")
+Meteor.publish('activityItems', (activity_id) ->
+  ActivityItems.find({activity_id: activity_id})
+)
+
+Meteor.publish('allUserData', () ->
+  Meteor.users.find({}, {fields:{'teams':1, 'profile':1, 'services.google.email':1}})
+)
+
+Meteor.publish("userData", () ->
+  Meteor.users.find({_id: this.userId}, {fields: {'rights': 1, 'session':1, 'teams':1, 'services.google.email':1}})
+)
+
+
+###
+Security
+###
+Teams.allow(
+  insert: (user_id, retro) ->
+    return true
+  update: (user_id, retro, fieldnames, modifier) ->
+    #Owner, collaborator
+    #return retro.user_id == user_id or _.some(retro.collaborators, (user) -> user == user_id)
+    return true
+  remove: (user_id, doc) ->
+    #Owner or admin
+    return retro.user_id == user_id or Meteor.user().rights.admin? == true
+)
+
+Retros.allow(
+  insert: (user_id, retro) ->
+    return true
+  update: (user_id, retro, fieldnames, modifier) ->
+    #Owner, collaborator
+    #return retro.user_id == user_id or _.some(retro.collaborators, (user) -> user == user_id)
+    return true
+  remove: (user_id, doc) ->
+    #Owner or admin
+    return retro.user_id == user_id or Meteor.user().rights.admin? == true
+)
+
+Activities.allow(
+  insert: (user_id, activity) ->
+    #retro = Retros.findOne(activity.retro_id)
+    #return retro.user_id == user_id or _.some(retro.collaborators, (user) -> user == user_id)
+    return true
+  update: (user_id, activity, fieldnames, modifier) ->
+    #retro = Retros.findOne(activity.retro_id)
+    #return retro.user_id == user_id or _.some(retro.collaborators, (user) -> user == user_id)
+    return true;
+  remove: (user_id, doc) ->
+    #Only admins can remove rights
+    return Meteor.user().rights.admin? == true
+)
+
+Meteor.users.allow(
+  update: (userId, modifier) ->
+    #if Meteor.user.rights.admin
+     # return true
+    return true
+)
