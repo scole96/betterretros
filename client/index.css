@@ -1,0 +1,11 @@
+div.headerSelect > ul {
+  padding-left: 20px;
+}
+
+span.ai-vote {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+span.ai-delete {
+  padding-left: 1em;
+}
