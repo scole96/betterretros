@@ -72,6 +72,35 @@ Handlebars.registerHelper('getCurrentActivityName', () ->
     ""
 )
 
+@definitions = {
+  'plusesDeltas': {
+    title: 'Pluses and Deltas',
+    template: 'votableColumns',
+    columnClass: 'span6',
+    columns: [
+      {title:'Pluses',type:1},
+      {title:'Deltas', type:2}]
+  },
+  'plusesDeltasKudos': {
+    title: 'Pluses, Deltas, Kudos',
+    template: 'votableColumns',
+    columnClass: 'span4',
+    columns: [
+      {title:'Pluses',type:1},
+      {title:'Deltas', type:2},
+      {title:'Kudos', type:3}]
+  },
+  'madsSadsGlads': {
+    title: 'Glads, Sads, Mads',
+    template: 'votableColumns',
+    columnClass: 'span4',
+    columns: [
+      {title:'Glads',type:1},
+      {title:'Sads', type:2},
+      {title:'Mads', type:3}]
+  }
+}
+
 Template.main_body.main = (data) ->
   requested_page = Session.get("page")
   console.log "Changing page to: " + requested_page
@@ -124,8 +153,10 @@ Template.selection.events(
     retro_id = event.target.dataset.id
     console.log "selected retro: " + retro_id
     Session.set("retro_id", retro_id)
-    activity_id = Activities.findOne({retro_id:retro_id}, sort: name: 1)
-    Session.set("activity_id", activity_id)
+    activity = Activities.find({retro_id:retro_id}, {}, sort: name: 1)
+    if activity
+      console.log "setting activity to: " + activity._id
+      Session.set("activity_id", activity._id)
     Session.set("page", "main")
   'click .activityLink' : (event, template) ->
     activity_id = event.target.dataset.id
@@ -134,7 +165,7 @@ Template.selection.events(
     Session.set("page", "main")
   'submit #newRetroForm' : (event, template) ->
     title = template.find("#newRetroTitle").value
-    retro_id = Retros.insert({name: title, team_id: Meteor.user().teams[0], leader_id: Meteor.userId()})
+    retro_id = Retros.insert({name: title, team_id: Meteor.user().teams[0], leader_id: Meteor.userId(), create_date: new Date()})
     Session.set("retro_id", retro_id)
     Session.set("activity_id", null)
     $('#newRetroModal').modal('hide')
@@ -150,7 +181,8 @@ Template.selection.events(
     retro_id = Session.get("retro_id")
     title = template.find("#newActivityTitle").value
     type = template.find("#newActivityType").value
-    activity_id = Activities.insert({retro_id:retro_id, name: title, type: type})
+    definition = definitions[type]
+    activity_id = Activities.insert({retro_id:retro_id, name: title, definition: definition, create_date: new Date()})
     Session.set("activity_id", activity_id)
     $('#newActivityModal').modal('hide')
     return false
@@ -250,59 +282,62 @@ Template.teamManagement.rendered = () ->
   })
 
 Template.main.ShowActivity = (data) ->
-  requested_page = data.type
-  Template[requested_page](data)
+  console.log "ShowActivity"
+  console.log data
+  template_name = data.definition.template
+  Template[template_name](data)
 
 Template.main.activity = () ->
   activity_id = Session.get("activity_id")
   if activity_id
     Activities.findOne(activity_id)
 
-Template.plusesDeltas.pluses = () ->
+Template.votableColumns.events(
+  'click #votingToggle' : (event, template) ->
+    console.log "Voting Toggle"
+    console.log "activity id: " + @._id
+    val = event.target.checked
+    console.log "setting voting_enabled to: " + val
+    Activities.update(@._id, $set:{'definition.voting_enabled': val})
+)
+
+Template.votableColumn.items = () ->
   activity_id = Session.get("activity_id")
-  items = ActivityItems.find({activity_id: activity_id, type:1}).fetch()
+  items = ActivityItems.find({activity_id: activity_id, type:@.type}).fetch()
   _.sortBy(items, (item) ->
-    console.log item.votes.length
     -1*item.votes.length
   )
-Template.plusesDeltas.deltas = () ->
-  activity_id = Session.get("activity_id")
-  ActivityItems.find({activity_id: activity_id, type:2})
 
-Template.plusesDeltas.isVoting = () ->
+Template.votableColumn.isVoting = () ->
   activity_id = Session.get("activity_id")
   if activity_id
     activity = Activities.findOne(activity_id)
-    activity.voting_enabled
+    activity.definition.voting_enabled
 
-Template.plusesDeltas.events(
+Template.votableColumn.events(
   'click .newActivityItem' : (event, template) ->
     console.log event.target
     event.preventDefault()
     event.stopPropagation()
-    $('#newActivityInput-1').removeClass("hidden")
+    $('#newActivityInput').removeClass("hidden")
   'submit .newActivityItemForm' : (event, template) ->
     input = event.target.elements[0]
     newName = input.value
     activity_id = Session.get("activity_id")
     type = $(input).data('activity-type')
-    ActivityItems.insert({activity_id:activity_id, name: newName, type: type})
+    ActivityItems.insert({activity_id:activity_id, name: newName, type: type, votes: []})
     input.value=""
     return false
   'click .delete-activity' : (event, template) ->
-    activity_id = $(event.target).data('pk')
-    ActivityItems.remove(activity_id)
+    activity_item_id = $(event.target).data('pk')
+    ActivityItems.remove(activity_item_id)
   'click .vote-activity' : (event, template) ->
     activity_id = $(event.target).data('pk')
     ActivityItems.update(activity_id, {$push:{votes:{date: new Date(), user_id: Meteor.userId()}}})
-  'click #votingToggle' : (event, template) ->
-    console.log "activity id: " + @._id
-    console.log event.target
-    val = event.target.checked
-    Activities.update(@._id, $set:{voting_enabled: val})
+
 )
 
-Template.plusesDeltas.rendered = () ->
+Template.votableColumn.rendered = () ->
   $.fn.editable.defaults.mode = 'inline';
   $(this.findAll('.activityItem')).editable( {
     showbuttons: false,
