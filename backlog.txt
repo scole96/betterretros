@@ -1,0 +1,24 @@
+Retrospective as a linear process
+ start and select activities
+ automatic activity changes by leader 
+ non-leaders can select team and join whatever retro and activity is in-progress (based on date?)
+ one active retro per team
+
+Voting Improvements
+ show total votes remaining
+ show/restrict users votes remaining
+ configurable number of votes/rules
+
+Show active users in an activity
+ track who is logged in and to what retro
+ show logged in users
+ show who's editing
+
+Alternate leaders
+
+New Activities:
+5 Whys
+Fishbone
+Timeline
+intro question
+Action Plan

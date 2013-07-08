@@ -15,6 +15,14 @@ Meteor.autosubscribe( () ->
   Meteor.subscribe("userData")
   Meteor.subscribe("allUserData");
 )
+Deps.autorun(() ->
+  if Meteor.user()
+    console.log "we have a user"
+    current_team_id = Meteor.user()?.session?.current_team_id
+    team = Teams.findOne(current_team_id)
+    Session.set('retro_id', team.current_retro_id)
+    Session.set('activity_id', team.current_activity_id)
+)
 
 Deps.autorun(() -> 
   teams = Meteor.user()?.teams
@@ -70,6 +78,11 @@ Handlebars.registerHelper('getCurrentActivityName', () ->
     Activities.findOne(activity_id)?.name
   else
     ""
+)
+
+Handlebars.registerHelper('isSpecial', () ->
+  email = Meteor.user()?.services?.google?.email
+  return email and email=="scole@wgen.net"
 )
 
 @definitions = {
@@ -165,9 +178,12 @@ Template.selection.events(
     Session.set("page", "main")
   'submit #newRetroForm' : (event, template) ->
     title = template.find("#newRetroTitle").value
-    retro_id = Retros.insert({name: title, team_id: Meteor.user().teams[0], leader_id: Meteor.userId(), create_date: new Date()})
+    team_id = Meteor.user().session.current_team_id
+    retro_id = Retros.insert({name: title, team_id: team_id, leader_id: Meteor.userId(), create_date: new Date()})
     Session.set("retro_id", retro_id)
     Session.set("activity_id", null)
+    team = Team.findOne(team_id)
+    team.current_retro_id = retro_id
     $('#newRetroModal').modal('hide')
     return false
   'submit #retroForm' : (event, template) ->
@@ -194,7 +210,18 @@ Template.selection.events(
       Activities.update(activity_id, $set: {name: title})
     $('#activityModal').modal('hide')
     return false
+  'click #startNewRetro' : (event, template) ->
+    title = "New Retrospective"
+    team_id = Meteor.user().session.current_team_id
+    retro_id = Retros.insert({name: title, team_id: team_id, leader_id: Meteor.userId(), create_date: new Date()})
+    Session.set("retro_id", retro_id)
+    Session.set("activity_id", null)
+    Session.set("page", "startRetro")
 )
+
+Template.startRetro.retro = () ->
+  retro_id = Session.get("retro_id")
+  retro = Retros.findOne(retro_id)
 
 Template.team.current = () ->
   current_team_id = Meteor.user()?.session?.current_team_id
