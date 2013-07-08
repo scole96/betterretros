@@ -48,13 +48,18 @@
         {{#each retros}}
           <li><a class="retroLink" data-id="{{_id}}" href="#">{{name}}</a></li>
         {{/each}}
-        <li class="divider"><li>
+        
         {{#if getCurrentRetroName}}
+          <li class="divider"><li>
           <li><a href="#retroModal" data-toggle="modal">Edit {{getCurrentRetroName}}</a></li>
           <li><a class="deleteRetro" href="#">Delete {{getCurrentRetroName}}</a></li>
+          <li class="divider"><li>
         {{/if}}
         {{#if currentUser.rights.leader}}
           <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
+          {{#if isSpecial}}
+            <li><a id="startNewRetro">Start a New Retro</a></li>
+          {{/if}}
         {{/if}}
       </ul>
     </li>
@@ -236,6 +241,15 @@
 <template name="main">
   {{#with activity}}
     {{{ShowActivity this}}}
+  {{/with}}
+</template>
+
+<template name="startRetro">
+  {{#with retro}}
+    <div class="">
+      <h3><a href="#" id="retroName" class="editable" data-type="text" data-pk="{{_id}}">{{name}} <i class="icon-pencil"></i></a></h3>
+
+    </div> 
   {{/with}}
 </template>
 
