@@ -21,8 +21,9 @@ Deps.autorun(() ->
     current_team_id = Meteor.user()?.session?.current_team_id
     team = Teams.findOne(current_team_id)
     retro = Retros.findOne(team.current_retro_id)
-    Session.set('retro_id', team.current_retro_id)
-    Session.set('activity_id', retro.current_activity_id)
+    if retro
+      Session.set('retro_id', team.current_retro_id)
+      Session.set('activity_id', retro.current_activity_id)
 )
 
 Deps.autorun(() -> 
@@ -70,6 +71,11 @@ Handlebars.registerHelper('isRetroLeader', () ->
   if retro_id and Meteor.userId()
     leader = Retros.findOne(retro_id)?.leader_id
     return leader == Meteor.userId()
+  else 
+    current_team_id = Meteor.user()?.session?.current_team_id
+    team = Teams.findOne(current_team_id)
+    if Meteor.userId() == team.leader
+      return true
   false
 )
 
@@ -187,7 +193,7 @@ Template.selection.events(
     retro_id = Retros.insert({name: title, team_id: team_id, leader_id: Meteor.userId(), create_date: new Date()})
     Session.set("retro_id", retro_id)
     Session.set("activity_id", null)
-    team = Team.findOne(team_id)
+    team = Teams.findOne(team_id)
     team.current_retro_id = retro_id
     $('#newRetroModal').modal('hide')
     return false
