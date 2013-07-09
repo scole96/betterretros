@@ -20,8 +20,9 @@ Deps.autorun(() ->
     console.log "we have a user"
     current_team_id = Meteor.user()?.session?.current_team_id
     team = Teams.findOne(current_team_id)
+    retro = Retros.findOne(team.current_retro_id)
     Session.set('retro_id', team.current_retro_id)
-    Session.set('activity_id', team.current_activity_id)
+    Session.set('activity_id', retro.current_activity_id)
 )
 
 Deps.autorun(() -> 
@@ -66,7 +67,7 @@ Handlebars.registerHelper('getCurrentRetroName', () ->
 )
 Handlebars.registerHelper('isRetroLeader', () ->
   retro_id = Session.get("retro_id")
-  if retro_id
+  if retro_id and Meteor.userId()
     leader = Retros.findOne(retro_id)?.leader_id
     return leader == Meteor.userId()
   false
@@ -111,6 +112,13 @@ Handlebars.registerHelper('isSpecial', () ->
       {title:'Glads',type:1},
       {title:'Sads', type:2},
       {title:'Mads', type:3}]
+  },
+  'fiveWhys': {
+    title: 'Five Whys',
+    template: 'votableColumns',
+    columnClass: 'span6',
+    columns: [
+      {title:'Why, Why, Why?',type:1}]
   }
 }
 
@@ -147,14 +155,6 @@ Template.selection.currentActivity = () ->
     "Activity: " + Activities.findOne(activity_id)?.name
   else
     "Select Activity"
-
-Template.selection.isRetroLeader = () ->
-  retro_id = Session.get("retro_id")
-  if retro_id
-    retro = Retros.findOne(retro_id)
-    retro.leader_id = Meteor.userId()
-   else
-    false
 
 Template.selection.activity = () ->
   activity_id = Session.get("activity_id")
@@ -199,6 +199,7 @@ Template.selection.events(
     type = template.find("#newActivityType").value
     definition = definitions[type]
     activity_id = Activities.insert({retro_id:retro_id, name: title, definition: definition, create_date: new Date()})
+    Retros.update(retro_id, $set:current_activity_id:activity_id)
     Session.set("activity_id", activity_id)
     $('#newActivityModal').modal('hide')
     return false
@@ -214,9 +215,10 @@ Template.selection.events(
     title = "New Retrospective"
     team_id = Meteor.user().session.current_team_id
     retro_id = Retros.insert({name: title, team_id: team_id, leader_id: Meteor.userId(), create_date: new Date()})
+    Teams.update(team_id, $set:current_retro_id:retro_id)
     Session.set("retro_id", retro_id)
     Session.set("activity_id", null)
-    Session.set("page", "startRetro")
+    #Session.set("page", "startRetro")
 )
 
 Template.startRetro.retro = () ->
@@ -321,25 +323,27 @@ Template.main.activity = () ->
 
 Template.votableColumns.events(
   'click #votingToggle' : (event, template) ->
-    console.log "Voting Toggle"
-    console.log "activity id: " + @._id
-    val = event.target.checked
-    console.log "setting voting_enabled to: " + val
-    Activities.update(@._id, $set:{'definition.voting_enabled': val})
+    Activities.update(@._id, $set:{'voting.enabled': event.target.checked})
+  'click #sortToggle' : (event, template) ->
+    Activities.update(@._id, $set:{'voting.sortByVotes': event.target.checked})
 )
 
 Template.votableColumn.items = () ->
   activity_id = Session.get("activity_id")
+  activity = Activities.findOne(activity_id)
   items = ActivityItems.find({activity_id: activity_id, type:@.type}).fetch()
-  _.sortBy(items, (item) ->
-    -1*item.votes.length
-  )
+  if activity.voting?.sortByVotes
+    _.sortBy(items, (item) ->
+      -1*item.votes.length
+    )
+  else
+    return items
 
 Template.votableColumn.isVoting = () ->
   activity_id = Session.get("activity_id")
   if activity_id
     activity = Activities.findOne(activity_id)
-    activity.definition.voting_enabled
+    activity.voting?.enabled
 
 Template.votableColumn.events(
   'click .newActivityItem' : (event, template) ->

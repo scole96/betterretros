@@ -54,15 +54,15 @@ Accounts.loginServiceConfiguration.remove({
 
 profile = Meteor.settings.profile
 if profile=="prod"
-  logger.info "Configuring google for allagash.meteor.com"
+  console.log "Configuring google for retros.meteor.com"
   Accounts.loginServiceConfiguration.insert({
       service: "google",
-      clientId: "130842781007-pfqtolte6t3g2ogn6kkop2lm77qvirgu.apps.googleusercontent.com",
-      secret: "Yo_y5_7NfmkCcOzJRuby1YJ5"
+      clientId: "357514018484-29gim4t4m5mn3g25j4sig8egkv0b9vm5.apps.googleusercontent.com",
+      secret: "EHdEsVSkAXWJQbeYcuxsyu5D"
   })
 else
   Accounts.loginServiceConfiguration.insert({
       service: "google",
-      clientId: "130842781007.apps.googleusercontent.com",
-      secret: "4t6vfYKodndASbxwYUvUCoOR"
+      clientId: "357514018484-ecc29drjm0vgaebuu4q67grd36il8k3g.apps.googleusercontent.com",
+      secret: "n4-T81HiQz_J-bEjHpFEaFlt"
   })

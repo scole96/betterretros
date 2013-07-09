@@ -39,121 +39,41 @@
 </template>
 
 <template name="selection">
-  <ul class="nav pull-left">
-    <li class="dropdown">
-      <a class="dropdown-toggle" data-toggle="dropdown" >
-        {{currentRetroName}}<b class="caret"></b>
-      </a>
-      <ul class="dropdown-menu">
-        {{#each retros}}
-          <li><a class="retroLink" data-id="{{_id}}" href="#">{{name}}</a></li>
-        {{/each}}
-        
-        {{#if getCurrentRetroName}}
-          <li class="divider"><li>
-          <li><a href="#retroModal" data-toggle="modal">Edit {{getCurrentRetroName}}</a></li>
-          <li><a class="deleteRetro" href="#">Delete {{getCurrentRetroName}}</a></li>
-          <li class="divider"><li>
-        {{/if}}
-        {{#if currentUser.rights.leader}}
-          <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
-          {{#if isSpecial}}
-            <li><a id="startNewRetro">Start a New Retro</a></li>
+  {{#if isRetroLeader}}
+    <ul class="nav pull-left">
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" >
+          {{currentRetroName}}<b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          {{#each retros}}
+            <li><a class="retroLink" data-id="{{_id}}" href="#">{{name}}</a></li>
+          {{/each}}
+          
+          {{#if getCurrentRetroName}}
+            <li class="divider"><li>
+            <li><a href="#retroModal" data-toggle="modal">Edit {{getCurrentRetroName}}</a></li>
+            <li><a class="deleteRetro" href="#">Delete {{getCurrentRetroName}}</a></li>
+            <li class="divider"><li>
           {{/if}}
-        {{/if}}
-      </ul>
-    </li>
-  </ul>
-  <div id="retroModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="retro-modal-label" aria-hidden="true">
-    <div class="modal-header">
-      <h3>Retrospective</h3>
-    </div>    
-    <form id="retroForm">
-      <div class="modal-body">
-        {{>meteorMessages}}
-        <label class="control-label" for="retroTitle">Title<span class="required">*</span></label>
-        <input type="text" id="retroTitle"  class="input-xlarge" value="{{getCurrentRetroName}}" required/>
-      </div>
-      <div class="modal-footer">
-        <a data-dismiss="modal" aria-hidden="true">Cancel</a>
-        <button type="submit" class="btn btn-primary">Save</button>
-      </div>
-    </form>
-  </div>
-
-  <div id="newRetroModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="new-retro-modal-label" aria-hidden="true">
-    <div class="modal-header">
-      <h3>New Retrospective</h3>
-    </div>    
-    <form id="newRetroForm">
-      <div class="modal-body">
-        {{>meteorMessages}}
-        <label class="control-label" for="newRetroTitle">Title<span class="required">*</span></label>
-        <input type="text" id="newRetroTitle"  class="input-xlarge" value="" required/>
-      </div>
-      <div class="modal-footer">
-        <a data-dismiss="modal" aria-hidden="true">Cancel</a>
-        <button type="submit" class="btn btn-primary">Save</button>
-      </div>
-    </form>
-  </div>
-
-  <ul class="nav pull-left">
-    <li class="dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        {{currentActivity}}<b class="caret"></b>
-      </a>
-      <ul class="dropdown-menu">
-        {{#each activities}}
-          <li><a class="activityLink" data-id="{{_id}}" href="#">{{name}}</a></li>
-        {{/each}}
-        <li class="divider"><li>
-        {{#if getCurrentActivityName}}
-          <li><a href="#activityModal" data-toggle="modal">Edit {{getCurrentActivityName}}</a></li>
-          <li><a class="deleteActivity" href="#">Delete {{getCurrentActivityName}}</a></li>
-        {{/if}}
-        {{#if getCurrentRetroName}}
-          {{#if isRetroLeader}}
-            <li><a href="#newActivityModal" data-toggle="modal">New Activity</a></li>
+          {{#if currentUser.rights.leader}}
+            <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
+            {{#if isSpecial}}
+              <li><a id="startNewRetro">Start a New Retro</a></li>
+            {{/if}}
           {{/if}}
-        {{/if}}
-      </ul>
-    </li>
-  </ul> 
-
-  <div id="newActivityModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="newActivity-modal-label" aria-hidden="true">
-    <div class="modal-header">
-      <h3>New Activity</h3>
-    </div>
-    <form id="newActivityForm">
-      <div class="modal-body">
-        {{>meteorMessages}}
-        <label class="control-label" for="newActivityTitle">Activity Type<span class="required">*</span></label>
-        <input type="text" id="newActivityTitle"  class="input-xlarge" required/>
-        <label class="control-label" for="newActivityType">Title<span class="required">*</span></label>
-        <select id="newActivityType">
-          <option value="madsSadsGlads">Glads, Sads, Mads</option>
-          <option value="plusesDeltas">Pluses and Deltas</option>
-          <option value="plusesDeltasKudos">Pluses, Deltas, Kudos</option>
-        </select>
-      </div>
-      <div class="modal-footer">
-        <a data-dismiss="modal" aria-hidden="true">Cancel</a>
-        <button type="submit" class="btn btn-primary">Save</button>
-      </div>
-    </form>
-  </div>
-
-  {{#with activity}}
-    <div id="activityModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="activity-modal-label" aria-hidden="true">
+        </ul>
+      </li>
+    </ul>
+    <div id="retroModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="retro-modal-label" aria-hidden="true">
       <div class="modal-header">
-        <h3>Edit Activity</h3>
-      </div>
-      <form id="activityForm">
+        <h3>Retrospective</h3>
+      </div>    
+      <form id="retroForm">
         <div class="modal-body">
           {{>meteorMessages}}
-          <label class="control-label" for="activityTitle">Title<span class="required">*</span></label>
-          <input type="text" id="activityTitle"  class="input-xlarge" value="{{name}}" required/>
+          <label class="control-label" for="retroTitle">Title<span class="required">*</span></label>
+          <input type="text" id="retroTitle"  class="input-xlarge" value="{{getCurrentRetroName}}" required/>
         </div>
         <div class="modal-footer">
           <a data-dismiss="modal" aria-hidden="true">Cancel</a>
@@ -161,7 +81,92 @@
         </div>
       </form>
     </div>
-  {{/with}}
+
+    <div id="newRetroModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="new-retro-modal-label" aria-hidden="true">
+      <div class="modal-header">
+        <h3>New Retrospective</h3>
+      </div>    
+      <form id="newRetroForm">
+        <div class="modal-body">
+          {{>meteorMessages}}
+          <label class="control-label" for="newRetroTitle">Title<span class="required">*</span></label>
+          <input type="text" id="newRetroTitle"  class="input-xlarge" value="" required/>
+        </div>
+        <div class="modal-footer">
+          <a data-dismiss="modal" aria-hidden="true">Cancel</a>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+
+    <ul class="nav pull-left">
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          {{currentActivity}}<b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          {{#each activities}}
+            <li><a class="activityLink" data-id="{{_id}}" href="#">{{name}}</a></li>
+          {{/each}}
+          <li class="divider"><li>
+          {{#if getCurrentActivityName}}
+            <li><a href="#activityModal" data-toggle="modal">Edit {{getCurrentActivityName}}</a></li>
+            <li><a class="deleteActivity" href="#">Delete {{getCurrentActivityName}}</a></li>
+          {{/if}}
+          {{#if getCurrentRetroName}}
+            {{#if isRetroLeader}}
+              <li><a href="#newActivityModal" data-toggle="modal">New Activity</a></li>
+            {{/if}}
+          {{/if}}
+        </ul>
+      </li>
+    </ul> 
+
+    <div id="newActivityModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="newActivity-modal-label" aria-hidden="true">
+      <div class="modal-header">
+        <h3>New Activity</h3>
+      </div>
+      <form id="newActivityForm">
+        <div class="modal-body">
+          {{>meteorMessages}}
+          <label class="control-label" for="newActivityTitle">Activity Type<span class="required">*</span></label>
+          <input type="text" id="newActivityTitle"  class="input-xlarge" required/>
+          <label class="control-label" for="newActivityType">Title<span class="required">*</span></label>
+          <select id="newActivityType">
+            <option value="madsSadsGlads">Glads, Sads, Mads</option>
+            <option value="plusesDeltas">Pluses and Deltas</option>
+            <option value="plusesDeltasKudos">Pluses, Deltas, Kudos</option>
+            <option value="fiveWhys">Five Whys</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <a data-dismiss="modal" aria-hidden="true">Cancel</a>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+
+    {{#with activity}}
+      <div id="activityModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="activity-modal-label" aria-hidden="true">
+        <div class="modal-header">
+          <h3>Edit Activity</h3>
+        </div>
+        <form id="activityForm">
+          <div class="modal-body">
+            {{>meteorMessages}}
+            <label class="control-label" for="activityTitle">Title<span class="required">*</span></label>
+            <input type="text" id="activityTitle"  class="input-xlarge" value="{{name}}" required/>
+          </div>
+          <div class="modal-footer">
+            <a data-dismiss="modal" aria-hidden="true">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    {{/with}}
+  {{else}}
+    <span class="static-title">{{currentRetroName}}</span><span class="static-title">{{currentActivity}}</span>
+  {{/if}}
 </template>
 
 <template name="team">
@@ -255,20 +260,21 @@
 
 <template name="votableColumn">
   <ul class="unstyled">
-    {{#each items}}
-      <li><a class="activityItem editable" data-pk="{{_id}}" data-activity-type="1" data-type="text" data-inputclass="input-large">{{name}}</a>
-        <span class="ai-delete pull-right"><a class="delete-activity" data-pk="{{_id}}"><i class="icon-trash" data-pk="{{_id}}"></i></a></span>
+    {{#each items }}
+      <li>
         {{#if isVoting}}
-          <span class="pull-right ai-vote">{{#if votes}} +{{votes.length}} {{/if}}<a class="vote-activity" data-pk="{{_id}}"><i class="icon-thumbs-up-alt" data-pk="{{_id}}"></i></a></span>
+          <span class="ai-vote">{{#if votes}} +{{votes.length}} {{/if}}
+            <a class="vote-activity" data-pk="{{_id}}"><i class="icon-thumbs-up-alt" data-pk="{{_id}}"></i></a>
+          </span>
         {{/if}}
+        <a class="activityItem editable" data-pk="{{_id}}" data-activity-type="1" data-type="text" data-inputclass="input-large">{{name}}</a>
+        <span class="ai-delete pull-right"><a class="delete-activity" data-pk="{{_id}}"><i class="icon-trash" data-pk="{{_id}}"></i></a></span>
       </li>
     {{/each}}
   </ul>
-  <span class="editable-container editable-inline" id="newActivityInput">
+  <span class="editable-container editable-inline" id="newActivityInput" style="display:block">
     <form class="newActivityItemForm form-inline editableform">
-      <div class="control-group">
-         <input type="text" class="input-large" style="padding-right: 24px;" data-activity-type="{{type}}">
-      </div>
+      <input type="text" class="input-block-level" data-activity-type="{{type}}">
     </form>
   </span>
 </template>
@@ -278,7 +284,10 @@
     {{#if isRetroLeader}}
       <span class="pull-right">
         <label class="checkbox">
-          Voting on?<input type="checkbox" id="votingToggle" {{#if isVoting}}checked{{/if}} />
+          Voting on?<input type="checkbox" id="votingToggle" {{#if voting.enabled}}checked{{/if}} />
+        </label>
+        <label class="checkbox">
+          Sort by Votes?<input type="checkbox" id="sortToggle" {{#if voting.sortByVotes}}checked{{/if}} />
         </label>
       </span>
     {{/if}}
@@ -286,7 +295,7 @@
   </div>
   <div class="row-fluid">
     {{#each definition.columns}}
-      <div id="plusesDiv" class="{{../definition.columnClass}} well well-large">
+      <div class="{{../definition.columnClass}} well well-large">
         <h4>{{title}}</h4>
         {{> votableColumn }}
       </div>
