@@ -166,15 +166,20 @@ Template.selection.events(
     retro_id = event.target.dataset.id
     console.log "selected retro: " + retro_id
     Session.set("retro_id", retro_id)
+    retro = Retros.findOne(retro_id)
+    Teams.update(retro.team_id, $set:current_retro_id:retro_id)
     activity = Activities.find({retro_id:retro_id}, {}, sort: name: 1)
     if activity
       console.log "setting activity to: " + activity._id
       Session.set("activity_id", activity._id)
+      Retros.update(retro_id, $set:current_activity_id:activity._id)
     Session.set("page", "main")
   'click .activityLink' : (event, template) ->
     activity_id = event.target.dataset.id
     console.log "selected activity: " + activity_id
     Session.set("activity_id", activity_id)
+    activity = Activities.findOne(activity_id)
+    Retros.update(activity.retro_id, $set:current_activity_id:activity._id)
     Session.set("page", "main")
   'submit #newRetroForm' : (event, template) ->
     title = template.find("#newRetroTitle").value
