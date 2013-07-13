@@ -27,6 +27,7 @@
     <div class="span10 headerSelect">
       {{>team}}
       {{>selection}}
+      {{>active_users}}
     </div>
     <div class="pull-right">
       {{loginButtons align="right"}}
@@ -53,10 +54,10 @@
           {{#if getCurrentRetroName}}
             <li class="divider"><li>
             <li><a href="#retroModal" data-toggle="modal">Edit {{getCurrentRetroName}}</a></li>
-            <li><a class="deleteRetro" href="#">Delete {{getCurrentRetroName}}</a></li>
-            <li class="divider"><li>
+            <li><a class="deleteRetro" href="#">Delete {{getCurrentRetroName}}</a></li>            
           {{/if}}
           {{#if currentUser.rights.leader}}
+            <li class="divider"><li>
             <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
             {{#if isSpecial}}
               <li><a id="startNewRetro">Start a New Retro</a></li>
@@ -169,6 +170,14 @@
   {{/if}}
 </template>
 
+<template name="active_users">
+  <span class="pull-right">
+    {{#each getActiveUsers}}
+      <span class="user-initals">{{profile.initials}}</span>
+    {{/each}}
+  </span>
+</template>
+
 <template name="team">
   {{#with current}}
     <ul class="nav pull-left">
@@ -274,7 +283,7 @@
   </ul>
   <span class="editable-container editable-inline" id="newActivityInput" style="display:block">
     <form class="newActivityItemForm form-inline editableform">
-      <input type="text" class="input-block-level" data-activity-type="{{type}}">
+      <input id="newActivityItemInput-{{type}}" type="text" class="input-block-level" data-activity-type="{{type}}">
     </form>
   </span>
 </template>

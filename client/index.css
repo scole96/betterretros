@@ -12,3 +12,16 @@ span.ai-delete {
 span.static-title {
   padding-left: 3em;
 }
+
+span.user-initals {
+  color: black; 
+  padding: 3px, 3px,3px,3px;
+  margin-left: 1em;
+  background-color: orange;
+}
+span.user-initals-0 {
+  background-color: orange; 
+}
+span.user-initals-1 {
+  background-color: blue; 
+}

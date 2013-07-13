@@ -9,7 +9,11 @@ Accounts.onCreateUser((options, user) ->
   #We still want the default hook's 'profile' behavior.
   if options.profile
     user.profile = options.profile
-
+    names = user.profile.name.split(" ")
+    initials = ""
+    for name in names
+      initials = initials + name[0]
+    user.profile.initials = initials
   user.teams = []
   teams = Teams.find({invites: email}).fetch()
   console.log "Found " + teams.length + " teams to add new user to"
