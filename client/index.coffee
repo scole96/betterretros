@@ -20,10 +20,11 @@ Deps.autorun(() ->
     console.log "we have a user"
     current_team_id = Meteor.user()?.session?.current_team_id
     team = Teams.findOne(current_team_id)
-    retro = Retros.findOne(team.current_retro_id)
-    if retro
+    if team.current_retro_id
       Session.set('retro_id', team.current_retro_id)
-      Session.set('activity_id', retro.current_activity_id)
+      retro = Retros.findOne(team.current_retro_id)
+      if retro and retro.current_activity_id
+        Session.set('activity_id', retro.current_activity_id)
 )
 
 Deps.autorun(() -> 
@@ -40,8 +41,9 @@ Deps.autorun(() ->
 
 Deps.autorun(() -> 
   activity_id = Session.get("activity_id")
+  retro_id = Session.get("retro_id")
   if activity_id
-    Meteor.subscribe('activityItems', activity_id)
+    Meteor.subscribe('activityItems', retro_id, activity_id)
 
 )
 
@@ -73,9 +75,10 @@ Handlebars.registerHelper('isRetroLeader', () ->
     return leader == Meteor.userId()
   else 
     current_team_id = Meteor.user()?.session?.current_team_id
-    team = Teams.findOne(current_team_id)
-    if Meteor.userId() == team.leader
-      return true
+    if current_team_id
+      team = Teams.findOne(current_team_id)
+      if team and Meteor.userId() == team.leader
+        return true
   false
 )
 
@@ -213,6 +216,7 @@ Template.selection.events(
     Retros.update(retro_id, $set:current_activity_id:activity_id)
     Session.set("activity_id", activity_id)
     $('#newActivityModal').modal('hide')
+    Session.set("page", "main")
     return false
   'submit #activityForm' : (event, template) ->
     console.log "save edit activity"
@@ -231,6 +235,12 @@ Template.selection.events(
     Session.set("activity_id", null)
     #Session.set("page", "startRetro")
 )
+Template.active_users.getActiveUsers = () ->
+  retro_id = Session.get("retro_id")
+  retro = Retros.findOne(retro_id)
+  if retro
+    Meteor.users.find(_id: $in: retro.active_users).fetch()
+    
 
 Template.startRetro.retro = () ->
   retro_id = Session.get("retro_id")

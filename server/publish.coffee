@@ -10,11 +10,19 @@ Meteor.publish('retros', (teams) ->
 
 @Activities = new Meteor.Collection("activities")
 Meteor.publish('activities', (retro_id) ->
+  this.session?.socket.on("close", () ->
+    console.log "User disconnected"
+    console.log this.userId()
+    Retros.update(retro._id, $pull:active_users:this.userId)
+  )
+  console.log "publish activities for retro: " + retro_id
+  console.log "user: " + this.userId
+  Retros.update(retro_id, $addToSet:active_users:this.userId)
   Activities.find({retro_id: retro_id})
 )
 
 @ActivityItems = new Meteor.Collection("activityItems")
-Meteor.publish('activityItems', (activity_id) ->
+Meteor.publish('activityItems', (retro_id, activity_id) ->
   ActivityItems.find({activity_id: activity_id})
 )
 
