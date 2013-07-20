@@ -2,13 +2,7 @@ div.headerSelect > ul {
   padding-left: 20px;
 }
 
-span.ai-vote {
-  padding-left: 1em;
-  padding-right: 1em;
-}
-span.ai-delete {
-  padding-left: 1em;
-}
+
 span.static-title {
   padding-left: 3em;
 }
@@ -24,4 +18,13 @@ span.user-initals-0 {
 }
 span.user-initals-1 {
   background-color: blue; 
+}
+li.activityItemRow {
+
+}
+a.activityItem {
+  
+}
+span.ai-actions a {
+  padding-right: .5em;
 }

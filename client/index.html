@@ -270,14 +270,31 @@
 <template name="votableColumn">
   <ul class="unstyled">
     {{#each items }}
-      <li>
+      <li class="activityItemRow">
         {{#if isVoting}}
           <span class="ai-vote">{{#if votes}} +{{votes.length}} {{/if}}
             <a class="vote-activity" data-pk="{{_id}}"><i class="icon-thumbs-up-alt" data-pk="{{_id}}"></i></a>
           </span>
         {{/if}}
+        {{#if owner}}
+          <span>{{getUserName owner}}</span>
+        {{/if}}
         <a class="activityItem editable" data-pk="{{_id}}" data-activity-type="1" data-type="text" data-inputclass="input-large">{{name}}</a>
-        <span class="ai-delete pull-right"><a class="delete-activity" data-pk="{{_id}}"><i class="icon-trash" data-pk="{{_id}}"></i></a></span>
+        <span class="ai-actions" style="display:none">
+          <a class="delete-activityItem pull-right"><i class="icon-trash" data-pk="{{_id}}"></i></a>
+          {{#if ../spawnable}}
+            {{#if isRetroLeader}}
+              {{#if relatedActivity}}
+                <a class="open-activity pull-right"><i class="icon-external-link" data-pk="{{relatedActivity}}"></i></a>
+              {{else}}
+                <a class="new-activity pull-right"><i class="icon-plus-sign-alt" data-pk="{{_id}}" data-name="{{name}}"></i></a>
+              {{/if}}
+            {{/if}}
+          {{/if}}
+          {{#if ../claimable}}
+            <a class="ai-claim pull-right"><i class="icon-user" data-pk="{{_id}}"></i></a>
+          {{/if}}
+        </span>
       </li>
     {{/each}}
   </ul>
@@ -290,15 +307,17 @@
 
 <template name="votableColumns">
   <div class="row-fluid">
-    {{#if isRetroLeader}}
-      <span class="pull-right">
-        <label class="checkbox">
-          Voting on?<input type="checkbox" id="votingToggle" {{#if voting.enabled}}checked{{/if}} />
-        </label>
-        <label class="checkbox">
-          Sort by Votes?<input type="checkbox" id="sortToggle" {{#if voting.sortByVotes}}checked{{/if}} />
-        </label>
-      </span>
+    {{#if definition.hasVotableColumn}}
+      {{#if isRetroLeader}}
+        <span class="pull-right">
+          <label class="checkbox">
+            Voting on?<input type="checkbox" id="votingToggle" {{#if voting.enabled}}checked{{/if}} />
+          </label>
+          <label class="checkbox">
+            Sort by Votes?<input type="checkbox" id="sortToggle" {{#if voting.sortByVotes}}checked{{/if}} />
+          </label>
+        </span>
+      {{/if}}
     {{/if}}
     <h3>{{definition.title}}</h3>
   </div>

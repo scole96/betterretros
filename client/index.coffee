@@ -19,12 +19,13 @@ Deps.autorun(() ->
   if Meteor.user()
     console.log "we have a user"
     current_team_id = Meteor.user()?.session?.current_team_id
-    team = Teams.findOne(current_team_id)
-    if team.current_retro_id
-      Session.set('retro_id', team.current_retro_id)
-      retro = Retros.findOne(team.current_retro_id)
-      if retro and retro.current_activity_id
-        Session.set('activity_id', retro.current_activity_id)
+    if team
+      team = Teams.findOne(current_team_id)
+      if team.current_retro_id
+        Session.set('retro_id', team.current_retro_id)
+        retro = Retros.findOne(team.current_retro_id)
+        if retro and retro.current_activity_id
+          Session.set('activity_id', retro.current_activity_id)
 )
 
 Deps.autorun(() -> 
@@ -90,44 +91,64 @@ Handlebars.registerHelper('getCurrentActivityName', () ->
     ""
 )
 
+Handlebars.registerHelper('getUserName', (id) ->
+  Meteor.users.findOne(id)?.profile.initials
+)
+
 Handlebars.registerHelper('isSpecial', () ->
   email = Meteor.user()?.services?.google?.email
   return email and email=="scole@wgen.net"
 )
 
+Handlebars.registerHelper('inspect', (object) ->
+  console.log object
+)
 @definitions = {
   'plusesDeltas': {
     title: 'Pluses and Deltas',
     template: 'votableColumns',
     columnClass: 'span6',
+    hasVotableColumn: true,
     columns: [
-      {title:'Pluses',type:1},
-      {title:'Deltas', type:2}]
+      {title:'Pluses',type:1, spawnable: true},
+      {title:'Deltas', type:2, spawnable: true}]
   },
   'plusesDeltasKudos': {
     title: 'Pluses, Deltas, Kudos',
     template: 'votableColumns',
     columnClass: 'span4',
+    hasVotableColumn: true,
     columns: [
-      {title:'Pluses',type:1},
-      {title:'Deltas', type:2},
-      {title:'Kudos', type:3}]
+      {title:'Pluses',type:1, spawnable: true},
+      {title:'Deltas', type:2, spawnable: true},
+      {title:'Kudos', type:3, spawnable: true}]
   },
   'madsSadsGlads': {
     title: 'Glads, Sads, Mads',
     template: 'votableColumns',
     columnClass: 'span4',
+    hasVotableColumn: true,
     columns: [
-      {title:'Glads',type:1},
-      {title:'Sads', type:2},
-      {title:'Mads', type:3}]
+      {title:'Glads',type:1, spawnable: true},
+      {title:'Sads', type:2, spawnable: true},
+      {title:'Mads', type:3, spawnable: true}]
   },
   'fiveWhys': {
     title: 'Five Whys',
     template: 'votableColumns',
     columnClass: 'span6',
+    hasVotableColumn: false,
     columns: [
-      {title:'Why, Why, Why?',type:1}]
+      {title:'Why, Why, Why?', type:1, spawnable: false}]
+  },
+  'rootCause': {
+    title: 'Root Cause'
+    template: 'votableColumns',
+    columnClass: 'span6',
+    hasVotableColumn: true,
+    columns: [
+      {title:'Root Causes', type:1, spawnable: false},
+      {title:'Action Items', type:2, claimable: true, spawnable: false}]
   }
 }
 
@@ -366,6 +387,11 @@ Template.votableColumn.isVoting = () ->
     activity = Activities.findOne(activity_id)
     activity.voting?.enabled
 
+Template.votableColumn.relatedActivity = () ->
+  console.log "activity item is " + @._id
+  Activities.findOne(parent_activity_item_id: @._id)?._id
+
+
 Template.votableColumn.events(
   'click .newActivityItem' : (event, template) ->
     console.log event.target
@@ -386,7 +412,32 @@ Template.votableColumn.events(
   'click .vote-activity' : (event, template) ->
     activity_id = $(event.target).data('pk')
     ActivityItems.update(activity_id, {$push:{votes:{date: new Date(), user_id: Meteor.userId()}}})
-
+  'mouseenter .activityItemRow' : (event, template) ->
+    $(event.target).find('span.ai-actions').show()
+  'mouseleave .activityItemRow' : (event, template) ->
+    $(event.target).find('span.ai-actions').hide()
+  'click .delete-activityItem' : (event, template) ->
+    id = $(event.target).data('pk')
+    ActivityItems.remove(id)
+  'click .new-activity' : (event, template) ->
+    retro_id = Session.get("retro_id")
+    name = $(event.target).data('name')
+    activity_item_id = $(event.target).data('pk')
+    title = "Root Cause for: " + name
+    def = definitions['rootCause']
+    def.title = title
+    activity_id = Activities.insert({retro_id:retro_id, name: title, definition: def, parent_activity_item_id: activity_item_id, create_date: new Date()})
+    Retros.update(retro_id, $set:current_activity_id:activity_id)
+    Session.set("activity_id", activity_id)
+  'click .open-activity' : (event, template) ->
+    retro_id = Session.get("retro_id")
+    activity_id = $(event.target).data('pk')
+    console.log "switch to activity: " + activity_id
+    Retros.update(retro_id, $set:current_activity_id:activity_id)
+    Session.set("activity_id", activity_id)
+  'click .ai-claim' : (event, template) ->
+    activity_item_id = $(event.target).data('pk')
+    ActivityItems.update(activity_item_id, $set: owner: Meteor.userId())
 )
 
 Template.votableColumn.rendered = () ->
@@ -399,7 +450,6 @@ Template.votableColumn.rendered = () ->
       ActivityItems.update(activity_item_id, $set: {name: newName})
   })
 
-   
 ##### Tracking selected list in URL #####
 
 RetrosRouter = Backbone.Router.extend(
