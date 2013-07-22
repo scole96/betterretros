@@ -273,7 +273,11 @@
       <li class="activityItemRow">
         {{#if isVoting}}
           <span class="ai-vote">{{#if votes}} +{{votes.length}} {{/if}}
-            <a class="vote-activity" data-pk="{{_id}}"><i class="icon-thumbs-up-alt" data-pk="{{_id}}"></i></a>
+            {{#if myHasVotesRemaining}}
+              <a class="vote-activity" data-pk="{{_id}}"><i class="{{voteIcon true}}" data-pk="{{_id}}"></i></a>
+            {{else}}
+              <a class="vote-activity" data-pk="{{_id}}"><i class="{{voteIcon false}}" data-pk="{{_id}}"></i></a>
+            {{/if}}
           </span>
         {{/if}}
         {{#if owner}}
@@ -314,12 +318,27 @@
             Voting on?<input type="checkbox" id="votingToggle" {{#if voting.enabled}}checked{{/if}} />
           </label>
           <label class="checkbox">
-            Sort by Votes?<input type="checkbox" id="sortToggle" {{#if voting.sortByVotes}}checked{{/if}} />
+            Show vote totals?<input type="checkbox" id="showVotesToggle" {{#if voting.showVotes}}checked{{/if}} />
           </label>
+          <label class="checkbox">
+            Sort by votes?<input type="checkbox" id="sortToggle" {{#if voting.sortByVotes}}checked{{/if}} />
+          </label>
+          <form class="form-inline">
+            <label>Votes per person?</label>
+            <input class="input-mini" type="text" id="votesEach" value="{{definition.votesEach}}" data-default="{{definition.votesEach}}" size="2"/>
+          </form>
         </span>
       {{/if}}
     {{/if}}
     <h3>{{definition.title}}</h3>
+    {{#if voting.enabled}}
+      <dl class="dl-horizontal">
+        <dt>My Votes Remaining</dt>
+        <dd>{{myVotesRemaining}}</dd>
+        <dt>Team Votes Remaining</dt>
+        <dd>{{teamVotesRemaining}}</dd>
+      </dt>
+    {{/if}}
   </div>
   <div class="row-fluid">
     {{#each definition.columns}}

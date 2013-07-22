@@ -17,7 +17,6 @@ Meteor.autosubscribe( () ->
 )
 Deps.autorun(() ->
   if Meteor.user()
-    console.log "we have a user"
     current_team_id = Meteor.user()?.session?.current_team_id
     if team
       team = Teams.findOne(current_team_id)
@@ -109,6 +108,7 @@ Handlebars.registerHelper('inspect', (object) ->
     template: 'votableColumns',
     columnClass: 'span6',
     hasVotableColumn: true,
+    votesEach: 3,
     columns: [
       {title:'Pluses',type:1, spawnable: true},
       {title:'Deltas', type:2, spawnable: true}]
@@ -118,6 +118,7 @@ Handlebars.registerHelper('inspect', (object) ->
     template: 'votableColumns',
     columnClass: 'span4',
     hasVotableColumn: true,
+    votesEach: 3,
     columns: [
       {title:'Pluses',type:1, spawnable: true},
       {title:'Deltas', type:2, spawnable: true},
@@ -128,6 +129,7 @@ Handlebars.registerHelper('inspect', (object) ->
     template: 'votableColumns',
     columnClass: 'span4',
     hasVotableColumn: true,
+    votesEach: 3,
     columns: [
       {title:'Glads',type:1, spawnable: true},
       {title:'Sads', type:2, spawnable: true},
@@ -146,6 +148,7 @@ Handlebars.registerHelper('inspect', (object) ->
     template: 'votableColumns',
     columnClass: 'span6',
     hasVotableColumn: true,
+    votesEach: 3,
     columns: [
       {title:'Root Causes', type:1, spawnable: false},
       {title:'Action Items', type:2, claimable: true, spawnable: false}]
@@ -353,8 +356,6 @@ Template.teamManagement.rendered = () ->
   })
 
 Template.main.ShowActivity = (data) ->
-  console.log "ShowActivity"
-  console.log data
   template_name = data.definition.template
   Template[template_name](data)
 
@@ -367,8 +368,22 @@ Template.votableColumns.events(
   'click #votingToggle' : (event, template) ->
     Activities.update(@._id, $set:{'voting.enabled': event.target.checked})
   'click #sortToggle' : (event, template) ->
-    Activities.update(@._id, $set:{'voting.sortByVotes': event.target.checked})
+    Activities.update(@._id, $set:{'voting.sortByVotes': event.target.checked})    
 )
+
+Template.votableColumns.events(okCancelEvents(
+  '#votesEach',
+  {
+    ok: (value, event) ->
+      console.log "save votesEach"
+      console.log @._id
+      votes = event.target.value
+      console.log votes
+      Activities.update(@._id, $set:{'definition.votesEach': votes})
+    cancel: () ->
+      console.log "cancel votesEach"
+      event.target.value = $(event.target).data('default')
+  }))
 
 Template.votableColumn.items = () ->
   activity_id = Session.get("activity_id")
@@ -381,16 +396,50 @@ Template.votableColumn.items = () ->
   else
     return items
 
+Template.votableColumn.relatedActivity = () ->
+  Activities.findOne(parent_activity_item_id: @._id)?._id
+
+Template.votableColumn.voteIcon = (hasVotesRemaining) ->
+  for vote in @.votes
+    if vote.user_id == Meteor.userId()
+      return "icon-thumbs-up no-vote"
+  if getMyVotesRemaining() > 0
+    "icon-thumbs-up-alt yes-vote"
+  else
+    ""
+
 Template.votableColumn.isVoting = () ->
   activity_id = Session.get("activity_id")
   if activity_id
     activity = Activities.findOne(activity_id)
     activity.voting?.enabled
 
-Template.votableColumn.relatedActivity = () ->
-  console.log "activity item is " + @._id
-  Activities.findOne(parent_activity_item_id: @._id)?._id
+Template.votableColumns.myHasVotesRemaining = () ->
+  votes = getMyVotesRemaining()
+  return votes > 0
 
+Template.votableColumns.myVotesRemaining = () ->
+  return getMyVotesRemaining()
+
+getMyVotesRemaining = () ->
+  activity = Activities.findOne(Session.get('activity_id'))
+  if activity.votes
+    votes = activity.votes[Meteor.userId()]
+    return activity.definition.votesEach - votes
+  return activity.definition.votesEach
+
+Template.votableColumns.teamVotesRemaining = () ->
+  activity = Activities.findOne(Session.get('activity_id'))
+  retro = Retros.findOne(Session.get("retro_id"))
+  if retro
+    totalVotes = activity.definition.votesEach * retro.active_users.length
+    if activity.votes
+      voteCount = 0
+      for vote in _.values(activity.votes)
+        voteCount += vote
+      return totalVotes - voteCount
+    else
+      totalVotes
 
 Template.votableColumn.events(
   'click .newActivityItem' : (event, template) ->
@@ -410,8 +459,21 @@ Template.votableColumn.events(
     activity_item_id = $(event.target).data('pk')
     ActivityItems.remove(activity_item_id)
   'click .vote-activity' : (event, template) ->
-    activity_id = $(event.target).data('pk')
-    ActivityItems.update(activity_id, {$push:{votes:{date: new Date(), user_id: Meteor.userId()}}})
+    icon = $(event.target)
+    console.log icon
+    activity_item_id = icon.data('pk')
+    counter = 1
+    if icon.hasClass('yes-vote')
+      console.log "voting"
+      ActivityItems.update(activity_item_id, {$push:{votes:{date: new Date(), user_id: Meteor.userId()}}})
+    else
+      console.log "unvoting"
+      ActivityItems.update(activity_item_id, $pull: votes: user_id: Meteor.userId())
+      counter = -1
+    key = 'votes.' + Meteor.userId()
+    inc = {$inc: {}}
+    inc['$inc'][key] = counter
+    Activities.update(Session.get('activity_id'), inc)
   'mouseenter .activityItemRow' : (event, template) ->
     $(event.target).find('span.ai-actions').show()
   'mouseleave .activityItemRow' : (event, template) ->
