@@ -11,6 +11,5 @@ handlebars
 coffeescript
 backbone
 bootstrap
-accounts-base
-accounts-ui
 accounts-google
+accounts-ui
