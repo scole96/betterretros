@@ -17,8 +17,10 @@ Meteor.autosubscribe( () ->
 )
 Deps.autorun(() ->
   if Meteor.user()
+    console.log "got a user"
     current_team_id = Meteor.user()?.session?.current_team_id
-    if team
+    if current_team_id
+      console.log "got a team"
       team = Teams.findOne(current_team_id)
       if team.current_retro_id
         Session.set('retro_id', team.current_retro_id)
@@ -144,13 +146,13 @@ Handlebars.registerHelper('inspect', (object) ->
       {title:'Why, Why, Why?', type:1, spawnable: false}]
   },
   'rootCause': {
-    title: 'Root Cause'
+    title: 'Root Cause Analysis'
     template: 'votableColumns',
     columnClass: 'span6',
     hasVotableColumn: true,
     votesEach: 3,
     columns: [
-      {title:'Root Causes', type:1, spawnable: false},
+      {title:'Root Cause Analysis', type:1, spawnable: false},
       {title:'Action Items', type:2, claimable: true, spawnable: false}]
   }
 }
@@ -262,7 +264,7 @@ Template.selection.events(
 Template.active_users.getActiveUsers = () ->
   retro_id = Session.get("retro_id")
   retro = Retros.findOne(retro_id)
-  if retro
+  if retro and retro.active_users
     Meteor.users.find(_id: $in: retro.active_users).fetch()
     
 
@@ -346,7 +348,6 @@ Template.teamManagement.events (
 )
 
 Template.teamManagement.rendered = () ->
-  $.fn.editable.defaults.mode = 'inline';
   $(this.find('#teamName')).editable( {
     showbuttons: false,
     success: (response, newName) ->
@@ -423,7 +424,7 @@ Template.votableColumns.myVotesRemaining = () ->
 
 getMyVotesRemaining = () ->
   activity = Activities.findOne(Session.get('activity_id'))
-  if activity.votes
+  if activity.votes and activity.votes[Meteor.userId()]
     votes = activity.votes[Meteor.userId()]
     return activity.definition.votesEach - votes
   return activity.definition.votesEach
@@ -433,10 +434,12 @@ Template.votableColumns.teamVotesRemaining = () ->
   retro = Retros.findOne(Session.get("retro_id"))
   if retro
     totalVotes = activity.definition.votesEach * retro.active_users.length
+    totalVotes = totalVotes - activity.definition.votesEach
     if activity.votes
       voteCount = 0
-      for vote in _.values(activity.votes)
-        voteCount += vote
+      for user, votes of activity.votes
+        if Meteor.userId()!=user
+          voteCount+=votes
       return totalVotes - voteCount
     else
       totalVotes
@@ -487,7 +490,6 @@ Template.votableColumn.events(
     activity_item_id = $(event.target).data('pk')
     title = "Root Cause for: " + name
     def = definitions['rootCause']
-    def.title = title
     activity_id = Activities.insert({retro_id:retro_id, name: title, definition: def, parent_activity_item_id: activity_item_id, create_date: new Date()})
     Retros.update(retro_id, $set:current_activity_id:activity_id)
     Session.set("activity_id", activity_id)
@@ -503,7 +505,6 @@ Template.votableColumn.events(
 )
 
 Template.votableColumn.rendered = () ->
-  $.fn.editable.defaults.mode = 'inline';
   $(this.findAll('.activityItem')).editable( {
     showbuttons: false,
     success: (response, newName) ->

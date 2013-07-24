@@ -25,3 +25,7 @@
 @activateInput = (input) ->
   input.focus()
   input.select()
+
+Meteor.startup(() ->
+  $.fn.editable.defaults.mode = 'inline';
+)

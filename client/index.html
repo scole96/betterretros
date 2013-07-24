@@ -8,26 +8,21 @@
 
 <body>
   <div class="container-fluid">
-    {{#if currentUser}}
-      {{> header }}
-      {{> main_body }}
-    {{else}}
-      {{>signup}}
-    {{/if}}
+    {{> header }}
+    {{> main_body }}
   </div>
 </body>
-
-<template name="signup">
-  {{loginButtons}}
-  You have to log in to play!
-</template>
 
 <template name="header">
   <div class="row-fluid">
     <div class="span10 headerSelect">
-      {{>team}}
-      {{>selection}}
-      {{>active_users}}
+      {{#if currentUser}}
+        {{>team}}
+        {{>selection}}
+        {{>active_users}}
+      {{else}}
+        <p>You have to sign in to start</p>
+      {{/if}}
     </div>
     <div class="pull-right">
       {{loginButtons align="right"}}
@@ -130,9 +125,9 @@
       <form id="newActivityForm">
         <div class="modal-body">
           {{>meteorMessages}}
-          <label class="control-label" for="newActivityTitle">Activity Type<span class="required">*</span></label>
+          <label class="control-label" for="newActivityTitle">Title<span class="required">*</span></label>
           <input type="text" id="newActivityTitle"  class="input-xlarge" required/>
-          <label class="control-label" for="newActivityType">Title<span class="required">*</span></label>
+          <label class="control-label" for="newActivityType">Activity Type<span class="required">*</span></label>
           <select id="newActivityType">
             <option value="madsSadsGlads">Glads, Sads, Mads</option>
             <option value="plusesDeltas">Pluses and Deltas</option>
@@ -323,10 +318,8 @@
           <label class="checkbox">
             Sort by votes?<input type="checkbox" id="sortToggle" {{#if voting.sortByVotes}}checked{{/if}} />
           </label>
-          <form class="form-inline">
-            <label>Votes per person?</label>
-            <input class="input-mini" type="text" id="votesEach" value="{{definition.votesEach}}" data-default="{{definition.votesEach}}" size="2"/>
-          </form>
+          <label>Votes per person?</label>
+          <input class="input-mini" type="text" id="votesEach" value="{{definition.votesEach}}" data-default="{{definition.votesEach}}" size="2"/>
         </span>
       {{/if}}
     {{/if}}
