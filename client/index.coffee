@@ -11,7 +11,6 @@ Session.setDefault("page", "main")
 
 Meteor.autosubscribe( () ->
   Meteor.subscribe("teams")
-  #Meteor.subscribe("users")
   Meteor.subscribe("userData")
   Meteor.subscribe("allUserData");
 )
@@ -70,7 +69,9 @@ Handlebars.registerHelper('getCurrentRetroName', () ->
   else
     ""
 )
-Handlebars.registerHelper('isRetroLeader', () ->
+Handlebars.registerHelper('isRetroLeader', isRetroLeader)
+
+isRetroLeader = () ->
   retro_id = Session.get("retro_id")
   if retro_id and Meteor.userId()
     leader = Retros.findOne(retro_id)?.leader_id
@@ -82,7 +83,6 @@ Handlebars.registerHelper('isRetroLeader', () ->
       if team and Meteor.userId() == team.leader
         return true
   false
-)
 
 Handlebars.registerHelper('getCurrentActivityName', () ->
   activity_id = Session.get("activity_id")
@@ -94,11 +94,6 @@ Handlebars.registerHelper('getCurrentActivityName', () ->
 
 Handlebars.registerHelper('getUserName', (id) ->
   Meteor.users.findOne(id)?.profile.initials
-)
-
-Handlebars.registerHelper('isSpecial', () ->
-  email = Meteor.user()?.services?.google?.email
-  return email and email=="scole@wgen.net"
 )
 
 Handlebars.registerHelper('inspect', (object) ->
@@ -137,6 +132,17 @@ Handlebars.registerHelper('inspect', (object) ->
       {title:'Sads', type:2, spawnable: true},
       {title:'Mads', type:3, spawnable: true}]
   },
+  'startStopContinue': {
+    title: 'Start, Stop, Continue',
+    template: 'votableColumns',
+    columnClass: 'span4',
+    hasVotableColumn: true,
+    votesEach: 3,
+    columns: [
+      {title:'Start Doing',type:1, spawnable: true},
+      {title:'Stop Doing', type:2, spawnable: true},
+      {title:'Continue Doing', type:3, spawnable: true}]
+  },
   'fiveWhys': {
     title: 'Five Whys',
     template: 'votableColumns',
@@ -164,6 +170,13 @@ Template.main_body.main = (data) ->
   #   logger.warn "No user, redirecting to the login page"
   #   Session.set("current_page", "login")
   Template[requested_page](Session.get("data"))
+
+Template.inviteRequest.events(
+  'submit #emailForm' : (event, template) ->
+    email = template.find("#email").value
+    Meteor.call("inviteRequest", email)
+    Meteor.Messages.sendSuccess("Thanks for your interest. We'll be in touch soon.")
+)
 
 Template.selection.retros = () ->
   teams = Meteor.user()?.teams
@@ -202,19 +215,21 @@ Template.selection.events(
     console.log "selected retro: " + retro_id
     Session.set("retro_id", retro_id)
     retro = Retros.findOne(retro_id)
-    Teams.update(retro.team_id, $set:current_retro_id:retro_id)
-    activity = Activities.find({retro_id:retro_id}, {}, sort: name: 1)
-    if activity
-      console.log "setting activity to: " + activity._id
-      Session.set("activity_id", activity._id)
-      Retros.update(retro_id, $set:current_activity_id:activity._id)
+    if isRetroLeader()
+      Teams.update(retro.team_id, $set:current_retro_id:retro_id)
+      activity = Activities.find({retro_id:retro_id}, {}, sort: name: 1)
+      if activity
+        console.log "setting activity to: " + activity._id
+        Session.set("activity_id", activity._id)
+        Retros.update(retro_id, $set:current_activity_id:activity._id)
     Session.set("page", "main")
   'click .activityLink' : (event, template) ->
     activity_id = event.target.dataset.id
     console.log "selected activity: " + activity_id
+    if isRetroLeader()
+      activity = Activities.findOne(activity_id)
+      Retros.update(activity.retro_id, $set:current_activity_id:activity._id)
     Session.set("activity_id", activity_id)
-    activity = Activities.findOne(activity_id)
-    Retros.update(activity.retro_id, $set:current_activity_id:activity._id)
     Session.set("page", "main")
   'submit #newRetroForm' : (event, template) ->
     title = template.find("#newRetroTitle").value
@@ -252,14 +267,6 @@ Template.selection.events(
       Activities.update(activity_id, $set: {name: title})
     $('#activityModal').modal('hide')
     return false
-  'click #startNewRetro' : (event, template) ->
-    title = "New Retrospective"
-    team_id = Meteor.user().session.current_team_id
-    retro_id = Retros.insert({name: title, team_id: team_id, leader_id: Meteor.userId(), create_date: new Date()})
-    Teams.update(team_id, $set:current_retro_id:retro_id)
-    Session.set("retro_id", retro_id)
-    Session.set("activity_id", null)
-    #Session.set("page", "startRetro")
 )
 Template.active_users.getActiveUsers = () ->
   retro_id = Session.get("retro_id")
@@ -267,11 +274,6 @@ Template.active_users.getActiveUsers = () ->
   if retro and retro.active_users
     Meteor.users.find(_id: $in: retro.active_users).fetch()
     
-
-Template.startRetro.retro = () ->
-  retro_id = Session.get("retro_id")
-  retro = Retros.findOne(retro_id)
-
 Template.team.current = () ->
   current_team_id = Meteor.user()?.session?.current_team_id
   Teams.findOne(current_team_id)
