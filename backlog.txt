@@ -1,20 +1,27 @@
-Retrospective as a linear process
- start and select activities
- automatic activity changes by leader 
- non-leaders can select team and join whatever retro and activity is in-progress (based on date?)
- one active retro per team
+Change Activity dropdown to be tabs
 
-Voting Improvements
- show total votes remaining
- show/restrict users votes remaining
- configurable number of votes/rules
 
-Show active users in an activity
+Leader Control
+  give leader ability to focus every one on an activity
+  allow users to change tabs within the activity
+
+Show active users in a retro
  track who is logged in and to what retro
  show logged in users
- show who's editing
+
+Show Editor/Author
+ highlight a field with unique color per person when editing
+
+Action Items
+  make it a panel on the right that can slide in/out
+  action items from an activity can be promoted to the retro action item list
 
 Alternate leaders
+
+Management Users
+  view only
+  can be on multiple teams
+  can review completed retros
 
 New Activities:
 5 Whys

@@ -55,11 +55,7 @@ Handlebars.registerHelper('formatDate', (date, format) ->
 
 Handlebars.registerHelper('email', () ->
   if Meteor.user()
-    if Meteor.user().emails
-      return Meteor.user().emails[0].address
-    else if Meteor.user().services and Meteor.user().services.google
-      return Meteor.user().services.google.email
-  return ""
+    getEmail Meteor.user()
 )
 
 Handlebars.registerHelper('getCurrentRetroName', () ->
@@ -69,19 +65,21 @@ Handlebars.registerHelper('getCurrentRetroName', () ->
   else
     ""
 )
-Handlebars.registerHelper('isRetroLeader', isRetroLeader)
-
-isRetroLeader = () ->
+Handlebars.registerHelper('isRetroLeader', () ->
   retro_id = Session.get("retro_id")
+  console.log "isRetroLeader: #{retro_id} and user: #{Meteor.userId()}"
   if retro_id and Meteor.userId()
     leader = Retros.findOne(retro_id)?.leader_id
     return leader == Meteor.userId()
-  else 
-    current_team_id = Meteor.user()?.session?.current_team_id
-    if current_team_id
-      team = Teams.findOne(current_team_id)
-      if team and Meteor.userId() == team.leader
-        return true
+  false
+)
+
+isRetroLeader = () ->
+  retro_id = Session.get("retro_id")
+  console.log "isRetroLeader: #{retro_id} and user: #{Meteor.userId()}"
+  if retro_id and Meteor.userId()
+    leader = Retros.findOne(retro_id)?.leader_id
+    return leader == Meteor.userId()
   false
 
 Handlebars.registerHelper('getCurrentActivityName', () ->

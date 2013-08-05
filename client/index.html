@@ -32,7 +32,6 @@
     <div class="span10 headerSelect">
       <img class="pull-left" src="logo.png" width="250" height="77"/>
       {{#if currentUser}}
-        {{>team}}
         {{>selection}}
       {{else}}
         <p>You have to sign in to start</p>
@@ -74,7 +73,7 @@
               <li><a class="deleteRetro" href="#">Delete {{getCurrentRetroName}}</a></li>            
             {{/if}}
           {{/if}}
-          {{#if isRetroLeader}}
+          {{#if currentUser.rights.leader}}
             <li class="divider"><li>
             <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
           {{/if}}
@@ -218,11 +217,7 @@
           {{/if}}
           {{#if isOwner}}
             <li><a id="editTeam">Manage {{name}}</a></li>
-            {{#if userHasMultipleTeams}}
-              <li><a id="deleteeam">Delete {{name}}</a></li>
-            {{/if}}
           {{/if}}
-          <li><a id="createTeam">Create New Team</a></li>
           {{#if currentUser.rights.admin}}
             <li><a id="admin_link" href="/admin">Administration</a></li>
 
