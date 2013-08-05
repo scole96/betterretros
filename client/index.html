@@ -1,5 +1,5 @@
 <head>  
-  <title>Beter Retrospectives</title>
+  <title>Better Retros</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"/>
   <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.5/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet"/>
@@ -8,18 +8,32 @@
 
 <body>
   <div class="container-fluid">
-    {{> header }}
-    {{> main_body }}
+    {{#if currentUser}}
+      {{> header }}
+      {{> main_body }}
+    {{else}}
+      <div class="pull-right">
+        {{loginButtons align="right"}}
+      </div>
+      <img src="logo.png"/>
+
+      <div class="text-center">
+        <p><strong>Better Retros is a tool to help Agile Teams execute, report and follow-up on their retrospectives.</strong></p>
+        <br/>
+        <label>Interested?</label>
+        {{>inviteRequest}}
+      </div> 
+    {{/if}} 
   </div>
 </body>
 
 <template name="header">
   <div class="row-fluid">
     <div class="span10 headerSelect">
+      <img class="pull-left" src="logo.png" width="250" height="77"/>
       {{#if currentUser}}
         {{>team}}
         {{>selection}}
-        {{>active_users}}
       {{else}}
         <p>You have to sign in to start</p>
       {{/if}}
@@ -30,12 +44,19 @@
   </div>
 </template>
 
+<template name="inviteRequest">
+  {{>meteorMessages}}
+  <form id="emailForm">
+    <input id="email" type="text" class="input-xlarge" placeholder="your email address"/><br/>
+    <input type="submit" class="btn btn-primary" value="Request an Invitation" />
+  </form>
+</template>
+
 <template name="main_body">
   {{{main}}}
 </template>
 
 <template name="selection">
-  {{#if isRetroLeader}}
     <ul class="nav pull-left">
       <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" >
@@ -46,17 +67,16 @@
             <li><a class="retroLink" data-id="{{_id}}" href="#">{{name}}</a></li>
           {{/each}}
           
-          {{#if getCurrentRetroName}}
-            <li class="divider"><li>
-            <li><a href="#retroModal" data-toggle="modal">Edit {{getCurrentRetroName}}</a></li>
-            <li><a class="deleteRetro" href="#">Delete {{getCurrentRetroName}}</a></li>            
+          {{#if isRetroLeader}}
+            {{#if getCurrentRetroName}}
+              <li class="divider"><li>
+              <li><a href="#retroModal" data-toggle="modal">Edit {{getCurrentRetroName}}</a></li>
+              <li><a class="deleteRetro" href="#">Delete {{getCurrentRetroName}}</a></li>            
+            {{/if}}
           {{/if}}
-          {{#if currentUser.rights.leader}}
+          {{#if isRetroLeader}}
             <li class="divider"><li>
             <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
-            {{#if isSpecial}}
-              <li><a id="startNewRetro">Start a New Retro</a></li>
-            {{/if}}
           {{/if}}
         </ul>
       </li>
@@ -105,9 +125,11 @@
             <li><a class="activityLink" data-id="{{_id}}" href="#">{{name}}</a></li>
           {{/each}}
           <li class="divider"><li>
-          {{#if getCurrentActivityName}}
-            <li><a href="#activityModal" data-toggle="modal">Edit {{getCurrentActivityName}}</a></li>
-            <li><a class="deleteActivity" href="#">Delete {{getCurrentActivityName}}</a></li>
+          {{#if isRetroLeader}}
+            {{#if getCurrentActivityName}}
+              <li><a href="#activityModal" data-toggle="modal">Edit {{getCurrentActivityName}}</a></li>
+              <li><a class="deleteActivity" href="#">Delete {{getCurrentActivityName}}</a></li>
+            {{/if}}
           {{/if}}
           {{#if getCurrentRetroName}}
             {{#if isRetroLeader}}
@@ -132,6 +154,7 @@
             <option value="madsSadsGlads">Glads, Sads, Mads</option>
             <option value="plusesDeltas">Pluses and Deltas</option>
             <option value="plusesDeltasKudos">Pluses, Deltas, Kudos</option>
+            <option value="startStopContinue">Start, Stop, Continue</options>
             <option value="fiveWhys">Five Whys</option>
           </select>
         </div>
@@ -160,9 +183,6 @@
         </form>
       </div>
     {{/with}}
-  {{else}}
-    <span class="static-title">{{currentRetroName}}</span><span class="static-title">{{currentActivity}}</span>
-  {{/if}}
 </template>
 
 <template name="active_users">
@@ -250,15 +270,6 @@
 <template name="main">
   {{#with activity}}
     {{{ShowActivity this}}}
-  {{/with}}
-</template>
-
-<template name="startRetro">
-  {{#with retro}}
-    <div class="">
-      <h3><a href="#" id="retroName" class="editable" data-type="text" data-pk="{{_id}}">{{name}} <i class="icon-pencil"></i></a></h3>
-
-    </div> 
   {{/with}}
 </template>
 

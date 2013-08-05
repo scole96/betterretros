@@ -1,8 +1,18 @@
+@InviteRequests = new Meteor.Collection("inviteRequests")
+@Invitations = new Meteor.Collection("invitations")
+
 Accounts.onCreateUser((options, user) ->
-  if user.emails
-    email = user.emails[0].address
-  else if user.services.google
-    email = user.services.google.email
+  console.log "on create user"
+  email = getEmail(user)
+
+  invite = Invitations.findOne(email)
+  if invite || email == "scole@wgen.net"
+    Invitations.update(invite._id, $set: {joined: new Date()})
+    return true
+  else
+    InviteRequests.insert({email:email, date: new Date(), method: "login"})
+    throw new Meteor.Error(403, "You must be invited to join BetterRetros. We've put in a request for you. You should hear from us soon.")
+  
   if email == 'scole@wgen.net' 
     user['rights'] = {'admin':true, 'leader':true}
 
@@ -42,6 +52,8 @@ Accounts.onCreateUser((options, user) ->
 )
 
 Meteor.methods (
+  inviteRequest: (email) ->
+    InviteRequests.insert({email:email, date: new Date(), method: "request"})
   findUserByEmail : (email) ->
     user = Meteor.users.findOne({'services.google.email':email})
     if user
