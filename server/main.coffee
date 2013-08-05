@@ -6,7 +6,9 @@ Accounts.onCreateUser((options, user) ->
   email = getEmail(user)
 
   invite = Invitations.findOne(email)
-  if invite || email == "scole@wgen.net"
+  if email == "scole@wgen.net"
+    #let him in
+  else if invite
     Invitations.update(invite._id, $set: {joined: new Date()})
     return true
   else
@@ -39,6 +41,7 @@ Accounts.onCreateUser((options, user) ->
 
   if user.teams.length==0
     console.log "Creating new team for new user"
+    user['rights'] = {'leader':true}
     team_name = user.profile.name + "'s Team"
     team_id = Teams.insert({name: team_name, leader: user._id})
     user.teams.push  team_id
