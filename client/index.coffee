@@ -159,6 +159,18 @@ Handlebars.registerHelper('inspect', (object) ->
       {title:'Root Cause Analysis', type:1, spawnable: false},
       {title:'Action Items', type:2, claimable: true, spawnable: false}]
   }
+  'fourLs': {
+    title: "The Four L's",
+    template: 'votableColumns',
+    columnClass: 'span3',
+    hasVotableColumn: true,
+    votesEach: 3,
+    columns: [
+      {title:'Liked',type:1, spawnable: true},
+      {title:'Learned', type:2, spawnable: true},
+      {title:'Lacked', type:3, spawnable: true}],
+      {title:'Longed For', type:4, spawnable: true}]
+  }
 }
 
 Template.main_body.main = (data) ->
@@ -190,7 +202,7 @@ Template.selection.currentRetroName = () ->
   else
     "Select Retrospective"
 
-Template.selection.activities = () ->
+Template.activityTab.activities = () ->
   retro_id = Session.get("retro_id")
   if retro_id
     Activities.find({retro_id:retro_id})
