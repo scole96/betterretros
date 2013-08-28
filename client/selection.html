@@ -73,6 +73,8 @@
             <option value="plusesDeltas">Pluses and Deltas</option>
             <option value="plusesDeltasKudos">Pluses, Deltas, Kudos</option>
             <option value="startStopContinue">Start, Stop, Continue</options>
+            <option value="fourLs">The Four L's</option>
+            <option value="sailboat">Sailboat</option>
             <option value="fiveWhys">Five Whys</option>
           </select>
         </div>
@@ -101,4 +103,13 @@
         </form>
       </div>
     {{/with}}
+</template>
+
+<template name="activityTab">
+  <ul class="nav nav-tabs">
+    {{#each activities}}
+      <li><a class="activityLink" data-id="{{_id}}">{{name}}</a></li>
+    {{/each}}
+    <li><a id="newActivity" href="#newActivityModal" data-toggle="modal">+ New Activity </li>
+  </ul>
 </template>
