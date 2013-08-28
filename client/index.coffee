@@ -168,8 +168,18 @@ Handlebars.registerHelper('inspect', (object) ->
     columns: [
       {title:'Liked',type:1, spawnable: true},
       {title:'Learned', type:2, spawnable: true},
-      {title:'Lacked', type:3, spawnable: true}],
+      {title:'Lacked', type:3, spawnable: true},
       {title:'Longed For', type:4, spawnable: true}]
+  },
+  'sailboat': {
+    title: 'Sailboat',
+    template: 'votableColumns',
+    columnClass: 'span6',
+    hasVotableColumn: true,
+    votesEach: 3,
+    columns: [
+      {title:'Anchors',type:1, spawnable: true},
+      {title:'Wind', type:2, spawnable: true}]
   }
 }
 
