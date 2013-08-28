@@ -1,0 +1,86 @@
+
+<template name="votableColumn">
+  <ul class="unstyled">
+    {{#each items }}
+      <li class="activityItemRow">
+        {{#if isVoting}}
+          <span class="ai-vote">{{#if votes}} +{{votes.length}} {{/if}}
+            {{#if myHasVotesRemaining}}
+              <a class="vote-activity" data-pk="{{_id}}"><i class="{{voteIcon true}}" data-pk="{{_id}}"></i></a>
+            {{else}}
+              <a class="vote-activity" data-pk="{{_id}}"><i class="{{voteIcon false}}" data-pk="{{_id}}"></i></a>
+            {{/if}}
+          </span>
+        {{/if}}
+        {{#if owner}}
+          <span>{{getUserName owner}}</span>
+        {{/if}}
+        <a class="activityItem editable" data-pk="{{_id}}" data-activity-type="1" data-type="text" data-inputclass="input-large">{{name}}</a>
+        <span class="ai-actions" style="display:none">
+          <a class="delete-activityItem pull-right"><i class="icon-trash" data-pk="{{_id}}"></i></a>
+          {{#if ../spawnable}}
+            {{#if isRetroLeader}}
+              {{#if relatedActivity}}
+                <a class="open-activity pull-right"><i class="icon-external-link" data-pk="{{relatedActivity}}"></i></a>
+              {{else}}
+                <a class="new-activity pull-right"><i class="icon-plus-sign-alt" data-pk="{{_id}}" data-name="{{name}}"></i></a>
+              {{/if}}
+            {{/if}}
+          {{/if}}
+          {{#if ../claimable}}
+            <a class="ai-claim pull-right"><i class="icon-user" data-pk="{{_id}}"></i></a>
+          {{/if}}
+        </span>
+      </li>
+    {{/each}}
+  </ul>
+  <span class="editable-container editable-inline" id="newActivityInput" style="display:block">
+    <form class="newActivityItemForm form-inline editableform">
+      <input id="newActivityItemInput-{{type}}" type="text" class="input-block-level" data-activity-type="{{type}}">
+    </form>
+  </span>
+</template>
+
+<template name="votableColumns">
+  <div class="row-fluid">
+    {{#if definition.hasVotableColumn}}
+      {{#if isRetroLeader}}
+        <div class="pull-right activity-management-container">
+          <button data-toggle="collapse" data-target="#activity-management">Leader Controls</button>
+          <div id="activity-management" class="activity-management collapse">
+            <label class="checkbox">
+              Voting on?<input type="checkbox" id="votingToggle" {{#if voting.enabled}}checked{{/if}} />
+            </label>
+            <label class="checkbox">
+              Show vote totals?<input type="checkbox" id="showVotesToggle" {{#if voting.showVotes}}checked{{/if}} />
+            </label>
+            <label class="checkbox">
+              Sort by votes?<input type="checkbox" id="sortToggle" {{#if voting.sortByVotes}}checked{{/if}} />
+            </label>
+            <label>Votes per person?
+            <input class="input-mini" type="text" id="votesEach" value="{{definition.votesEach}}" data-default="{{definition.votesEach}}" size="2"/></label>
+          </div>
+        </div>
+
+      {{/if}}
+    {{/if}}
+    <h3>{{definition.title}}</h3>
+    {{#if voting.enabled}}
+      <dl class="dl-horizontal">
+        <dt>My Votes Remaining</dt>
+        <dd>{{myVotesRemaining}}</dd>
+        <dt>Team Votes Remaining</dt>
+        <dd>{{teamVotesRemaining}}</dd>
+      </dt>
+    {{/if}}
+  </div>
+  <div class="row-fluid">
+    {{#each definition.columns}}
+      <div class="{{../definition.columnClass}} well well-large">
+        <h4>{{title}}</h4>
+        {{> votableColumn }}
+      </div>
+    {{/each}}
+  </div>
+</template>
+

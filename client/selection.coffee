@@ -13,11 +13,6 @@ Template.selection.currentRetroName = () ->
   else
     "Select Retrospective"
 
-Template.activityTab.activities = () ->
-  retro_id = Session.get("retro_id")
-  if retro_id
-    Activities.find({retro_id:retro_id})
-
 Template.selection.currentActivity = () ->
   activity_id = Session.get("activity_id")
   if activity_id
@@ -89,3 +84,8 @@ Template.selection.events(
     $('#activityModal').modal('hide')
     return false
 )
+
+Template.activityTab.activities = () ->
+  retro_id = Session.get("retro_id")
+  if retro_id
+    Activities.find({retro_id:retro_id})

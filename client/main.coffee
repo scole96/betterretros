@@ -122,7 +122,6 @@ Template.main.activity = () ->
   if activity_id
     Activities.findOne(activity_id)
 
-
 ##### Tracking selected list in URL #####
 
 RetrosRouter = Backbone.Router.extend(
