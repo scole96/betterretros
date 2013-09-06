@@ -36,3 +36,17 @@ div.activity-management-container {}
   margin-bottom: 1em;
 }
 
+a.owned {
+  color: green !important;
+}
+a.not-owned{
+  color: red !important;
+}
+
+span.owner{
+  font-size: .5em;
+  padding-right: 3px;
+}
+li.actionItem a.owned i {
+  font-size: 1em;
+}
