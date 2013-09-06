@@ -23,9 +23,10 @@ Management Users
   can be on multiple teams
   can review completed retros
 
-New Activities:
-5 Whys
-Fishbone
-Timeline
+New Activities: http://agileretrospectivewiki.org/
+silent mode - each user adds privately
+grouping function - group similar items together
 intro question
 Action Plan
+Timeline
+layout for sailboat

@@ -4,6 +4,7 @@
 @Retros = new Meteor.Collection("retros")
 @Activities = new Meteor.Collection("activities")
 @ActivityItems = new Meteor.Collection("activityItems")
+@ActionItems = new Meteor.Collection("actionItems")
 
 Session.setDefault('retro_id', null)
 Session.setDefault('activity_id', null)
@@ -38,6 +39,7 @@ Deps.autorun(() ->
   retro_id = Session.get("retro_id")
   if retro_id
     Meteor.subscribe('activities', retro_id)
+    Meteor.subscribe('actionItems', retro_id)
 )  
 
 Deps.autorun(() -> 
@@ -67,18 +69,20 @@ Handlebars.registerHelper('getCurrentRetroName', () ->
 )
 Handlebars.registerHelper('isRetroLeader', () ->
   retro_id = Session.get("retro_id")
-  console.log "isRetroLeader: #{retro_id} and user: #{Meteor.userId()}"
+  console.log "HB-isRetroLeader: retro: #{retro_id} and user: #{Meteor.userId()}"
   if retro_id and Meteor.userId()
     leader = Retros.findOne(retro_id)?.leader_id
+    console.log "leader is #{leader}"
     return leader == Meteor.userId()
   false
 )
 
-isRetroLeader = () ->
+@isRetroLeader = () ->
   retro_id = Session.get("retro_id")
-  console.log "isRetroLeader: #{retro_id} and user: #{Meteor.userId()}"
+  console.log "isRetroLeader: retro: #{retro_id} and user: #{Meteor.userId()}"
   if retro_id and Meteor.userId()
     leader = Retros.findOne(retro_id)?.leader_id
+    console.log "leader is #{leader}"
     return leader == Meteor.userId()
   false
 

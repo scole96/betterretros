@@ -8,6 +8,11 @@ Meteor.publish('retros', (teams) ->
   Retros.find({team_id: {$in: teams}})
 )
 
+@ActionItems = new Meteor.Collection("actionItems")
+Meteor.publish('actionItems', (retro_id) ->
+  ActionItems.find({retro_id: retro_id})
+)
+
 @Activities = new Meteor.Collection("activities")
 Meteor.publish('activities', (retro_id) ->
   this.onStop( () ->
