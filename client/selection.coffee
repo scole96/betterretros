@@ -38,15 +38,7 @@ Template.selection.events(
         console.log "setting activity to: " + activity._id
         Session.set("activity_id", activity._id)
         Retros.update(retro_id, $set:current_activity_id:activity._id)
-    Session.set("page", "main")
-  'click .activityLink' : (event, template) ->
-    activity_id = event.target.dataset.id
-    console.log "selected activity: " + activity_id
-    if isRetroLeader()
-      activity = Activities.findOne(activity_id)
-      Retros.update(activity.retro_id, $set:current_activity_id:activity._id)
-    Session.set("activity_id", activity_id)
-    Session.set("page", "main")
+    Session.set("page", "main")    
   'submit #newRetroForm' : (event, template) ->
     title = template.find("#newRetroTitle").value
     team_id = Meteor.user().session.current_team_id
@@ -89,3 +81,18 @@ Template.activityTab.activities = () ->
   retro_id = Session.get("retro_id")
   if retro_id
     Activities.find({retro_id:retro_id})
+
+Template.activityTab.isActive = (id) ->
+  return "active" if Session.get("activity_id")==id
+
+Template.activityTab.events(
+  'click .activityLink' : (event, template) ->
+    event.preventDefault()
+    activity_id = event.target.dataset.id
+    console.log "selected activity: " + activity_id
+    if isRetroLeader()
+      activity = Activities.findOne(activity_id)
+      Retros.update(activity.retro_id, $set:current_activity_id:activity._id)
+    Session.set("activity_id", activity_id)
+    Session.set("page", "main")
+)
