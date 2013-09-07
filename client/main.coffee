@@ -110,6 +110,21 @@ Template.main_body.main = (data) ->
   #   Session.set("current_page", "login")
   Template[requested_page](Session.get("data"))
 
+Template.main_body.events(
+  'mouseenter #actionItemsPanel' : (event, template) ->
+    if $('#actionItemsPanel').width()<200 and !$('#actionItemsList').hasClass("hide")
+      $('#actionItemsPanel').removeClass("span2")
+      $('#actionItemsPanel').addClass("span4")
+      $('#mainPanel').removeClass("span10")
+      $('#mainPanel').addClass("span8")
+  'mouseleave #actionItemsPanel' : (event, template) ->
+    if $('#actionItemsPanel').hasClass("span4")
+      $('#actionItemsPanel').removeClass("span4")
+      $('#actionItemsPanel').addClass("span2")
+      $('#mainPanel').removeClass("span8")
+      $('#mainPanel').addClass("span10")
+)
+
 Template.inviteRequest.events(
   'submit #emailForm' : (event, template) ->
     email = template.find("#email").value

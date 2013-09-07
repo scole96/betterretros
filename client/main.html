@@ -29,16 +29,18 @@
 
 <template name="header">
   <div class="row-fluid">
-    <div class="span10 headerSelect">
+    <div class="span5 headerSelect">
       <img class="pull-left" src="logo.png" width="250" height="77"/>
+    </div>
+    <div class="span3">
       {{#if currentUser}}
         {{>selection}}
       {{else}}
         <p>You have to sign in to start</p>
       {{/if}}
     </div>
-    <div class="pull-right">
-      {{loginButtons align="right"}}
+    <div class="span4">
+      <span class="pull-right">{{loginButtons align="right"}}</span>
     </div>
   </div>
 </template>
@@ -53,11 +55,11 @@
 
 <template name="main_body">
   <div class="row-fluid">
-    <div class="span10">
+    <div id="mainPanel" class="span10">
       {{>activityTab}}
       {{{main}}}
     </div>
-    <div class="span2 well well-large">
+    <div id="actionItemsPanel" class="span2 well well-large">
       {{>actionItems}}
     </div>
   </div>
