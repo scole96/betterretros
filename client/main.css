@@ -50,3 +50,7 @@ span.owner{
 li.actionItem a.owned i {
   font-size: 1em;
 }
+div#actionItemsPanel {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}

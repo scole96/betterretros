@@ -2,9 +2,13 @@ Template.actionItems.actionItems = () ->
   ActionItems.find(retro_id: Session.get("retro_id"))
 
 Template.actionItems.events(
+  'click #collapse' : (event, template) ->
+    $('#actionItemsList').toggleClass("hide")
+    $('#collapse').toggleClass("icon-collapse")
+    $('#collapse').toggleClass("icon-expand")
   'click .delete' : (event, template) ->
     _id = $(event.target).data('pk')
-    ActionItems.remove(_id)
+    ActionItems.remove(_id)    
   'mouseenter .activityItemRow' : (event, template) ->
     $(event.target).find('span.ai-actions').show()
   'mouseleave .activityItemRow' : (event, template) ->
