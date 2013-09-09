@@ -112,17 +112,18 @@ Template.main_body.main = (data) ->
 
 Template.main_body.events(
   'mouseenter #actionItemsPanel' : (event, template) ->
-    if $('#actionItemsPanel').width()<200 and !$('#actionItemsList').hasClass("hide")
-      $('#actionItemsPanel').removeClass("span2")
-      $('#actionItemsPanel').addClass("span4")
-      $('#mainPanel').removeClass("span10")
-      $('#mainPanel').addClass("span8")
+    if $('#actionItemsPanel').width()<200 and !$('#actionItemsPanel').hasClass("hide")
+      $('#actionItemsPanel').removeClass("span2").addClass("span4")
+      $('#mainPanel').removeClass("span10").addClass("span8")
   'mouseleave #actionItemsPanel' : (event, template) ->
-    if $('#actionItemsPanel').hasClass("span4")
-      $('#actionItemsPanel').removeClass("span4")
-      $('#actionItemsPanel').addClass("span2")
-      $('#mainPanel').removeClass("span8")
-      $('#mainPanel').addClass("span10")
+    if $('#actionItemsPanel').hasClass("span4") and !$('#actionItemsPanel').hasClass("hide")
+      $('#actionItemsPanel').removeClass("span4").addClass("span2")
+      $('#mainPanel').removeClass("span8").addClass("span10")
+  'click .actionItemsExpander': (event, template) ->
+    $('.actionItemsExpander').addClass("hide")
+    $('#actionItemsPanel').removeClass("hide")
+    $('#mainPanel').removeClass("span12").addClass("span8")
+    $('#actionItemsPanel').removeClass("span2").addClass("span4")
 )
 
 Template.inviteRequest.events(
