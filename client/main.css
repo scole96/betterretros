@@ -54,3 +54,30 @@ div#actionItemsPanel {
   padding-top: 5px;
   padding-bottom: 5px;
 }
+div.actionItemsExpander {
+  height: 1em;
+  width: 8em;
+  padding: 5px;
+  text-align: center;
+  position:fixed;
+  top: 25%;
+  bottom:100px;
+  right:-3em;
+}
+.rotate {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+
+  /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+
+  /* Should be unset in IE9+ I think. */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
