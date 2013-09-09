@@ -46,7 +46,7 @@
     {{#if definition.hasVotableColumn}}
       {{#if isRetroLeader}}
         <div class="pull-right activity-management-container">
-          <button data-toggle="collapse" data-target="#activity-management">Leader Controls</button>
+          <button data-toggle="collapse" class="btn btn-primary" data-target="#activity-management">Leader Controls</button>
           <div id="activity-management" class="activity-management collapse">
             <label class="checkbox">
               Voting on?<input type="checkbox" id="votingToggle" {{#if voting.enabled}}checked{{/if}} />
