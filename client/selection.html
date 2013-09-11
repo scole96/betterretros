@@ -29,7 +29,7 @@
       </div>    
       <form id="retroForm">
         <div class="modal-body">
-          {{>meteorMessages}}
+          {{>flashMessages}}
           <label class="control-label" for="retroTitle">Title<span class="required">*</span></label>
           <input type="text" id="retroTitle"  class="input-xlarge" value="{{getCurrentRetroName}}" required/>
         </div>
@@ -46,7 +46,7 @@
       </div>    
       <form id="newRetroForm">
         <div class="modal-body">
-          {{>meteorMessages}}
+          {{>flashMessages}}
           <label class="control-label" for="newRetroTitle">Title<span class="required">*</span></label>
           <input type="text" id="newRetroTitle"  class="input-xlarge" value="" required/>
         </div>
@@ -64,9 +64,9 @@
       </div>
       <form id="newActivityForm">
         <div class="modal-body">
-          {{>meteorMessages}}
+          {{>flashMessages}}
           <label class="control-label" for="newActivityTitle">Title<span class="required">*</span></label>
-          <input type="text" id="newActivityTitle"  class="input-xlarge" required/>
+          <input type="text" id="newActivityTitle" class="input-xlarge" value="{{getTitle}}" required/>
           <label class="control-label" for="newActivityType">Activity Type<span class="required">*</span></label>
           <select id="newActivityType">
             <option value="madsSadsGlads">Glads, Sads, Mads</option>
@@ -93,7 +93,7 @@
         </div>
         <form id="activityForm">
           <div class="modal-body">
-            {{>meteorMessages}}
+            {{>flashMessages}}
             <label class="control-label" for="activityTitle">Title<span class="required">*</span></label>
             <input type="text" id="activityTitle"  class="input-xlarge" value="{{name}}" required/>
           </div>

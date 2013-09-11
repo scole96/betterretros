@@ -7,8 +7,8 @@
     "packages": {
       "flash-messages": {
         "git": "https://github.com/camilosw/flash-messages.git",
-        "tag": "v0.1.3.1",
-        "commit": "b4b02b1a21789b7d19350410e2f98d66a872a683"
+        "tag": "v0.2.1",
+        "commit": "62cf1ee531684808b91dbe3ff15e63f6d5af1c66"
       }
     }
   }
