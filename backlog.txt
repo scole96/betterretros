@@ -1,32 +1,42 @@
-Change Activity dropdown to be tabs
-
 
 Leader Control
   give leader ability to focus every one on an activity
-  allow users to change tabs within the activity
 
 Show active users in a retro
  track who is logged in and to what retro
  show logged in users
 
-Show Editor/Author
- highlight a field with unique color per person when editing
-
-Action Items
-  make it a panel on the right that can slide in/out
-  action items from an activity can be promoted to the retro action item list
-
 Alternate leaders
 
 Management Users
-  view only
+  move to user name drop down menu with (Manage Team, My Profile, Administration, Logout)
+  view only team members for non-leader
+  everyone can send an invitation
   can be on multiple teams
-  can review completed retros
 
+Activity Features:
+  silent mode - each user adds privately
+  revote function
+  grouping function - group similar items together
+  show who wrote it
+  put the retro in the navbar as a link to manage retro page
+
+Manage Retros Page
+  list all retros
+  new retro
+  change retro titles
+  delete retro
+  open retro
+    list all activities
+    delete activity
+    change activity name
+
+Review action items from previous Retro
+  default activity for a new retro
+  pulls action items from previous retro
 New Activities: http://agileretrospectivewiki.org/
-silent mode - each user adds privately
-grouping function - group similar items together
-intro question
-Action Plan
-Timeline
-layout for sailboat
+  fun intro questions
+  Timeline
+  layout for sailboat
+  five why's that asks why each time
+  icons for the columns
