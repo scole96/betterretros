@@ -130,7 +130,7 @@ Template.inviteRequest.events(
   'submit #emailForm' : (event, template) ->
     email = template.find("#email").value
     Meteor.call("inviteRequest", email)
-    Meteor.Messages.sendSuccess("Thanks for your interest. We'll be in touch soon.")
+    FlashMessages.sendSuccess("Thanks for your interest. We'll be in touch soon.")
 )
 
 Template.main.ShowActivity = (data) ->
