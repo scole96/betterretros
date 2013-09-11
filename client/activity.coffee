@@ -122,11 +122,18 @@ Template.votableColumn.events(
     retro_id = Session.get("retro_id")
     name = $(event.target).data('name')
     activity_item_id = $(event.target).data('pk')
-    title = "Root Cause for: " + name
-    def = definitions['rootCause']
-    activity_id = Activities.insert({retro_id:retro_id, name: title, definition: def, parent_activity_item_id: activity_item_id, create_date: new Date()})
-    Retros.update(retro_id, $set:current_activity_id:activity_id)
-    Session.set("activity_id", activity_id)
+    title = name.slice(0,15)
+    data = 
+      title: title
+      parent: activity_item_id
+    Session.set("new-activity", data)
+
+    $('#newActivityModal').modal('show')
+
+    # def = definitions['rootCause']
+    # activity_id = Activities.insert({retro_id:retro_id, name: title, definition: def, parent_activity_item_id: activity_item_id, create_date: new Date()})
+    # Retros.update(retro_id, $set:current_activity_id:activity_id)
+    # Session.set("activity_id", activity_id)
   'click .open-activity' : (event, template) ->
     retro_id = Session.get("retro_id")
     activity_id = $(event.target).data('pk')

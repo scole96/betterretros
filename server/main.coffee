@@ -71,13 +71,12 @@ Accounts.loginServiceConfiguration.remove({
     service: "google"
 })
 
-profile = Meteor.settings.profile
-if profile=="prod"
-  console.log "Configuring google for retros.meteor.com"
+if Meteor.settings.google
+  console.log "Configuring google auth based on settings file"
   Accounts.loginServiceConfiguration.insert({
       service: "google",
-      clientId: "357514018484-29gim4t4m5mn3g25j4sig8egkv0b9vm5.apps.googleusercontent.com",
-      secret: "EHdEsVSkAXWJQbeYcuxsyu5D"
+      clientId: Meteor.settings.google.clientId
+      secret: Meteor.settings.google.secret
   })
 else
   Accounts.loginServiceConfiguration.insert({

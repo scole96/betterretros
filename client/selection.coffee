@@ -1,3 +1,5 @@
+Template.selection.getTitle = () ->
+  return Session.get("new-activity")?.title
 
 Template.selection.retros = () ->
   teams = Meteor.user()?.teams
@@ -61,8 +63,10 @@ Template.selection.events(
     title = template.find("#newActivityTitle").value
     type = template.find("#newActivityType").value
     definition = definitions[type]
-    activity_id = Activities.insert({retro_id:retro_id, name: title, definition: definition, create_date: new Date()})
+    parent = Session.get("new-activity")?.parent
+    activity_id = Activities.insert({retro_id:retro_id, name: title, definition: definition, parent_activity_item_id: parent, create_date: new Date()})
     Retros.update(retro_id, $set:current_activity_id:activity_id)
+    Session.set("new-activity", null)
     Session.set("activity_id", activity_id)
     $('#newActivityModal').modal('hide')
     Session.set("page", "main")
@@ -86,6 +90,8 @@ Template.activityTab.isActive = (id) ->
   return "active" if Session.get("activity_id")==id
 
 Template.activityTab.events(
+  'click #newActivity' : (event, template) ->
+    Session.set("new-activity", null)
   'click .activityLink' : (event, template) ->
     event.preventDefault()
     activity_id = event.target.dataset.id
