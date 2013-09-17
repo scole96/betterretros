@@ -113,7 +113,9 @@
         {{#each activities}}
           <li class="{{isActive _id}}"><a href="" class="activityLink" data-id="{{_id}}">{{name}}</a></li>
         {{/each}}
-        <li><a id="newActivity" href="#newActivityModal" data-toggle="modal">+ New Activity </li>
+        {{#if isRetroLeader}}
+          <li><a id="newActivity" href="#newActivityModal" data-toggle="modal">+ New Activity </li>
+        {{/if}}
       </ul>
     </div>
   </div>
