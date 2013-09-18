@@ -1,5 +1,6 @@
 {
   "packages": {
-    "flash-messages": {}
+    "flash-messages": {},
+    "iron-router": {}
   }
 }

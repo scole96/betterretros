@@ -15,6 +15,9 @@ Template.selection.currentRetroName = () ->
   else
     "Select Retrospective"
 
+Template.selection.rendered = () ->
+  console.log "selection rendered"
+  
 Template.selection.currentActivity = () ->
   activity_id = Session.get("activity_id")
   if activity_id

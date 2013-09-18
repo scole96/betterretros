@@ -9,9 +9,9 @@ underscore
 jquery
 handlebars
 coffeescript
-backbone
 bootstrap
 accounts-google
 accounts-ui
 standard-app-packages
 flash-messages
+iron-router

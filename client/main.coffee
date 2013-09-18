@@ -102,15 +102,7 @@ Handlebars.registerHelper('inspect', (object) ->
   console.log object
 )
 
-Template.main_body.main = (data) ->
-  requested_page = Session.get("page")
-  console.log "Changing page to: " + requested_page
-  # if Meteor.user() == null && requested_page!="register" && requested_page!="forgotPassword"
-  #   logger.warn "No user, redirecting to the login page"
-  #   Session.set("current_page", "login")
-  Template[requested_page](Session.get("data"))
-
-Template.main_body.events(
+Template.retro.events(
   'mouseenter #actionItemsPanel' : (event, template) ->
     if $('#actionItemsPanel').width()<200 and !$('#actionItemsPanel').hasClass("hide")
       $('#actionItemsPanel').removeClass("span2").addClass("span4")
@@ -133,31 +125,42 @@ Template.inviteRequest.events(
     FlashMessages.sendSuccess("Thanks for your interest. We'll be in touch soon.")
 )
 
-Template.main.ShowActivity = (data) ->
+Template.retro.showActivity = (data) ->
   template_name = data.definition.template
   Template[template_name](data)
 
-Template.main.activity = () ->
-  activity_id = Session.get("activity_id")
-  if activity_id
-    Activities.findOne(activity_id)
 
 ##### Tracking selected list in URL #####
+Router.configure
+  layout: "layout"
+  notFoundTemplate: "notFound"
+  loadingTemplate: "loading"
 
-RetrosRouter = Backbone.Router.extend(
-  routes: 
-    "retro/:retro_id":  "retro"
-    "retro/:retro_id/activity/:activity_id": "activity"
-  retro: (retro_id) -> 
-    Session.set("retro_id", retro_id)
-    Session.set("activity_id", null)
-  activity: (retro_id, activity_id) ->
-    Session.set("retro_id", retro_id)
-    Session.set("activity_id", activity_id)
-)
 
-@Router = new RetrosRouter()
+Router.map ->
+  @route "teamManagement", path: "/team"
+  @route "admin", path: "/admin"
+  @route "retro", path: "/", controller: "RetroController"
+  @route "retro", path: "/retro/:_id", controller: "RetroController"
+  @route "retro", path: "/retro/:retro_id/activity/:activity_id", controller: "RetroController"
 
-Meteor.startup () -> 
-  Backbone.history.start(pushState: true)
+class @RetroController extends RouteController 
+  template: 'retro'
+
+  renderTemplates: 
+    'selection': to: 'menu'
+  
+  data: -> 
+    console.log "in data with retroId: #{@params.retro_id} and activityId: #{@params.activity_id}"
+    data = {}
+    if @params.retro_id
+      Session.set("retro_id", @params.retro_id)
+      data.retro = Retros.findOne @params.retro_id
+    if @params.activity_id
+      data.activity = Activities.findOne @params.activity_id
+      Session.set("activity_id", @params.activity_id)
+    else
+      Session.set("activity_id", null)
+    return data
+
 

@@ -53,7 +53,7 @@ Template.team.events (
 Template.teamManagement.current = () ->
   current_team_id = Meteor.user()?.session?.current_team_id
   Teams.findOne(current_team_id)
-
+ 
 Template.teamManagement.teamMembers = () ->
   team_id = this._id
   users = Meteor.users.find({teams: team_id})
@@ -76,6 +76,7 @@ Template.teamManagement.events (
         Meteor.users.update(user_id, $push: {teams:team_id})
       else
         Teams.update(team_id, $push: {invites: email})
+      $('#newMember').val("")
     )
     return false
 )
