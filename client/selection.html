@@ -65,8 +65,9 @@
       <form id="newActivityForm">
         <div class="modal-body">
           {{>flashMessages}}
+          <input type="hidden" id="newActivityParent"/>
           <label class="control-label" for="newActivityTitle">Title<span class="required">*</span></label>
-          <input type="text" id="newActivityTitle" class="input-xlarge" value="{{getTitle}}" required/>
+          <input type="text" id="newActivityTitle" class="input-xlarge" required/>
           <label class="control-label" for="newActivityType">Activity Type<span class="required">*</span></label>
           <select id="newActivityType">
             <option value="madsSadsGlads">Glads, Sads, Mads</option>
@@ -111,7 +112,7 @@
     <div class="navbar-inner">
       <ul class="nav">
         {{#each activities}}
-          <li class="{{isActive _id}}"><a href="/retro/{{retro_id}}/activity/{{_id}}" class="activityLink" data-id="{{_id}}">{{name}}</a></li>
+          <li class="{{isActive _id}}"><a href="/activity/{{_id}}" class="activityLink" data-id="{{_id}}">{{name}}</a></li>
         {{/each}}
         {{#if isRetroLeader}}
           <li><a id="newActivity" href="#newActivityModal" data-toggle="modal">+ New Activity </li>

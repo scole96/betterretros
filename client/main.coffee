@@ -8,26 +8,25 @@
 
 Session.setDefault('retro_id', null)
 Session.setDefault('activity_id', null)
-Session.setDefault("page", "main")
 
 Meteor.autosubscribe( () ->
   Meteor.subscribe("teams")
   Meteor.subscribe("userData")
   Meteor.subscribe("allUserData");
 )
-Deps.autorun(() ->
-  if Meteor.user()
-    console.log "got a user"
-    current_team_id = Meteor.user()?.session?.current_team_id
-    if current_team_id
-      console.log "got a team"
-      team = Teams.findOne(current_team_id)
-      if team.current_retro_id
-        Session.set('retro_id', team.current_retro_id)
-        retro = Retros.findOne(team.current_retro_id)
-        if retro and retro.current_activity_id
-          Session.set('activity_id', retro.current_activity_id)
-)
+# Deps.autorun(() ->
+#   if Meteor.user()
+#     console.log "got a user"
+#     current_team_id = Meteor.user()?.session?.current_team_id
+#     if current_team_id
+#       console.log "got a team"
+#       team = Teams.findOne(current_team_id)
+#       if team.current_retro_id
+#         Session.set('retro_id', team.current_retro_id)
+#         retro = Retros.findOne(team.current_retro_id)
+#         if retro and retro.current_activity_id
+#           Session.set('activity_id', retro.current_activity_id)
+# )
 
 Deps.autorun(() -> 
   teams = Meteor.user()?.teams
@@ -142,7 +141,7 @@ Router.map ->
   @route "admin", path: "/admin"
   @route "retro", path: "/", controller: "RetroController"
   @route "retro", path: "/retro/:retro_id", controller: "RetroController"
-  @route "retro", path: "/retro/:retro_id/activity/:activity_id", controller: "RetroController"
+  @route "retro", path: "/activity/:activity_id", controller: "RetroController"
 
 class @RetroController extends RouteController 
   template: 'retro'
@@ -153,19 +152,29 @@ class @RetroController extends RouteController
   data: -> 
     console.log "in data with retroId: #{@params.retro_id} and activityId: #{@params.activity_id}"
     data = {}
-    if @params.retro_id
-      Session.set("retro_id", @params.retro_id)
-      data.retro = Retros.findOne @params.retro_id
-    if @params.activity_id
-      data.activity = Activities.findOne @params.activity_id
-      Session.set("activity_id", @params.activity_id)
-    else
-      activity = Activities.findOne( retro_id: @params.retro_id)
-      if activity
-        data.activity = activity
-        Session.set("activity_id", activity._id)
-      else
-        Session.set("activity_id", null)
+    retro_id = @params.retro_id
+    activity_id = @params.activity_id
+
+    if !retro_id and !activity_id
+      data.retro = Retros.findOne()
+    else if activity_id
+      data.activity = Activities.findOne activity_id
+    else if retro_id
+      data.retro = Retros.findOne retro_id
+    
+    console.log data
+
+    if !data.retro and !data.activity
+      console.log "trouble, we got neither retros or activity"
+    else if !data.activity
+      data.activity = Activities.findOne( retro_id: data.retro._id)
+    else if !data.retro
+      data.retro = Retros.findOne data.activity.retro_id
+
+    Session.set("retro_id", data.retro._id)
+    if data.activity
+      Session.set("activity_id", data.activity._id)
+    
     return data
 
 

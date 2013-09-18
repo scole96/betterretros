@@ -123,23 +123,20 @@ Template.votableColumn.events(
     name = $(event.target).data('name')
     activity_item_id = $(event.target).data('pk')
     title = name.slice(0,15)
-    data = 
-      title: title
-      parent: activity_item_id
-    Session.set("new-activity", data)
-
+    $('#newActivityTitle').val(title)
+    $('#newActivityParent').val(activity_item_id)
     $('#newActivityModal').modal('show')
 
     # def = definitions['rootCause']
     # activity_id = Activities.insert({retro_id:retro_id, name: title, definition: def, parent_activity_item_id: activity_item_id, create_date: new Date()})
     # Retros.update(retro_id, $set:current_activity_id:activity_id)
     # Session.set("activity_id", activity_id)
-  'click .open-activity' : (event, template) ->
-    retro_id = Session.get("retro_id")
-    activity_id = $(event.target).data('pk')
-    console.log "switch to activity: " + activity_id
-    Retros.update(retro_id, $set:current_activity_id:activity_id)
-    Session.set("activity_id", activity_id)
+  # 'click .open-activity' : (event, template) ->
+  #   retro_id = Session.get("retro_id")
+  #   activity_id = $(event.target).data('pk')
+  #   console.log "switch to activity: " + activity_id
+  #   Retros.update(retro_id, $set:current_activity_id:activity_id)
+  #   Session.set("activity_id", activity_id)
   'click .ai-claim' : (event, template) ->
     activity_item_id = $(event.target).data('pk')
     ActivityItems.update(activity_item_id, $set: owner: Meteor.userId())

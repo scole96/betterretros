@@ -21,7 +21,7 @@
           {{#if ../spawnable}}
             {{#if isRetroLeader}}
               {{#if relatedActivity}}
-                <a class="open-activity pull-right"><i class="icon-external-link" data-pk="{{relatedActivity}}"></i></a>
+                <a class="pull-right" href="/activity/{{relatedActivity}}"><i class="icon-external-link"></i></a>
               {{else}}
                 <a class="new-activity pull-right"><i class="icon-plus-sign-alt" data-pk="{{_id}}" data-name="{{name}}"></i></a>
               {{/if}}
