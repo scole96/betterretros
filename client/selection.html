@@ -6,7 +6,7 @@
         </a>
         <ul class="dropdown-menu">
           {{#each retros}}
-            <li><a class="retroLink" data-id="{{_id}}" href="#">{{name}}</a></li>
+            <li><a href="/retro/{{_id}}">{{name}}</a></li>
           {{/each}}
           
           {{#if isRetroLeader}}

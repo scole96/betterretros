@@ -15,9 +15,6 @@ Template.selection.currentRetroName = () ->
   else
     "Select Retrospective"
 
-Template.selection.rendered = () ->
-  console.log "selection rendered"
-  
 Template.selection.currentActivity = () ->
   activity_id = Session.get("activity_id")
   if activity_id
@@ -31,28 +28,22 @@ Template.selection.activity = () ->
     Activities.findOne(activity_id)
 
 Template.selection.events(
-  'click .retroLink' : (event, template) ->
-    retro_id = event.target.dataset.id
-    console.log "selected retro: " + retro_id
-    Session.set("retro_id", retro_id)
-    retro = Retros.findOne(retro_id)
-    if isRetroLeader()
-      Teams.update(retro.team_id, $set:current_retro_id:retro_id)
-      activity = Activities.find({retro_id:retro_id}, {}, sort: name: 1)
-      if activity
-        console.log "setting activity to: " + activity._id
-        Session.set("activity_id", activity._id)
-        Retros.update(retro_id, $set:current_activity_id:activity._id)
-    Session.set("page", "main")    
+    # eyes on me
+    # if isRetroLeader()
+    #   Teams.update(retro.team_id, $set:current_retro_id:retro_id)
+    #   activity = Activities.find({retro_id:retro_id}, {}, sort: name: 1)
+    #   if activity
+    #     console.log "setting activity to: " + activity._id
+    #     Session.set("activity_id", activity._id)
+    #     Retros.update(retro_id, $set:current_activity_id:activity._id)
   'submit #newRetroForm' : (event, template) ->
     title = template.find("#newRetroTitle").value
     team_id = Meteor.user().session.current_team_id
-    retro_id = Retros.insert({name: title, team_id: team_id, leader_id: Meteor.userId(), create_date: new Date()})
-    Session.set("retro_id", retro_id)
-    Session.set("activity_id", null)
+    retro_id = Retros.insert({name: title, team_id: team_id, leader_id: Meteor.userId(), create_date: new Date()})    
     team = Teams.findOne(team_id)
     team.current_retro_id = retro_id
     $('#newRetroModal').modal('hide')
+    Router.go( Router.path("retro", {retro_id: retro_id, activity_id: null}))
     return false
   'submit #retroForm' : (event, template) ->
     title = template.find("#retroTitle").value
@@ -70,9 +61,8 @@ Template.selection.events(
     activity_id = Activities.insert({retro_id:retro_id, name: title, definition: definition, parent_activity_item_id: parent, create_date: new Date()})
     Retros.update(retro_id, $set:current_activity_id:activity_id)
     Session.set("new-activity", null)
-    Session.set("activity_id", activity_id)
     $('#newActivityModal').modal('hide')
-    Session.set("page", "main")
+    Router.go( Router.path("retro", {retro_id: retro_id, activity_id: activity_id}))
     return false
   'submit #activityForm' : (event, template) ->
     console.log "save edit activity"
@@ -95,13 +85,12 @@ Template.activityTab.isActive = (id) ->
 Template.activityTab.events(
   'click #newActivity' : (event, template) ->
     Session.set("new-activity", null)
-  'click .activityLink' : (event, template) ->
-    event.preventDefault()
-    activity_id = event.target.dataset.id
-    console.log "selected activity: " + activity_id
-    if isRetroLeader()
-      activity = Activities.findOne(activity_id)
-      Retros.update(activity.retro_id, $set:current_activity_id:activity._id)
-    Session.set("activity_id", activity_id)
-    Session.set("page", "main")
 )
+
+    # eyes on me
+    # activity_id = event.target.dataset.id
+    # console.log "selected activity: " + activity_id
+    # if isRetroLeader()
+    #   activity = Activities.findOne(activity_id)
+    #   Retros.update(activity.retro_id, $set:current_activity_id:activity._id)
+    # Session.set("activity_id", activity_id)

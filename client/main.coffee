@@ -141,7 +141,7 @@ Router.map ->
   @route "teamManagement", path: "/team"
   @route "admin", path: "/admin"
   @route "retro", path: "/", controller: "RetroController"
-  @route "retro", path: "/retro/:_id", controller: "RetroController"
+  @route "retro", path: "/retro/:retro_id", controller: "RetroController"
   @route "retro", path: "/retro/:retro_id/activity/:activity_id", controller: "RetroController"
 
 class @RetroController extends RouteController 
@@ -160,7 +160,12 @@ class @RetroController extends RouteController
       data.activity = Activities.findOne @params.activity_id
       Session.set("activity_id", @params.activity_id)
     else
-      Session.set("activity_id", null)
+      activity = Activities.findOne( retro_id: @params.retro_id)
+      if activity
+        data.activity = activity
+        Session.set("activity_id", activity._id)
+      else
+        Session.set("activity_id", null)
     return data
 
 
