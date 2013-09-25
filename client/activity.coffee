@@ -126,17 +126,6 @@ Template.votableColumn.events(
     $('#newActivityTitle').val(title)
     $('#newActivityParent').val(activity_item_id)
     $('#newActivityModal').modal('show')
-
-    # def = definitions['rootCause']
-    # activity_id = Activities.insert({retro_id:retro_id, name: title, definition: def, parent_activity_item_id: activity_item_id, create_date: new Date()})
-    # Retros.update(retro_id, $set:current_activity_id:activity_id)
-    # Session.set("activity_id", activity_id)
-  # 'click .open-activity' : (event, template) ->
-  #   retro_id = Session.get("retro_id")
-  #   activity_id = $(event.target).data('pk')
-  #   console.log "switch to activity: " + activity_id
-  #   Retros.update(retro_id, $set:current_activity_id:activity_id)
-  #   Session.set("activity_id", activity_id)
   'click .ai-claim' : (event, template) ->
     activity_item_id = $(event.target).data('pk')
     ActivityItems.update(activity_item_id, $set: owner: Meteor.userId())
@@ -150,3 +139,28 @@ Template.votableColumn.rendered = () ->
       activity_item_id = $(this).data('pk')
       ActivityItems.update(activity_item_id, $set: {name: newName})
   })
+
+Template.newActivity.events(
+  'submit #newActivityForm' : (event, template) ->
+    console.log "save new activity"
+    retro_id = Session.get("retro_id")
+    title = template.find("#newActivityTitle").value
+    type = template.find("#newActivityType").value
+    definition = definitions[type]
+    parent = Session.get("new-activity")?.parent
+    activity_id = Activities.insert({retro_id:retro_id, name: title, definition: definition, parent_activity_item_id: parent, create_date: new Date()})
+    Retros.update(retro_id, $set:current_activity_id:activity_id)
+    $('#newActivityModal').modal('hide')
+    Router.go( Router.path("retro", {retro_id: retro_id, activity_id: activity_id}))
+    return false
+)
+Template.editActivity.events(    
+  'submit #activityForm' : (event, template) ->
+    console.log "save edit activity"
+    activity_id = Session.get("activity_id")
+    if activity_id
+      title = template.find("#activityTitle").value
+      Activities.update(activity_id, $set: {name: title})
+    $('#activityModal').modal('hide')
+    return false
+)
