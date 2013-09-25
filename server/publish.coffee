@@ -66,7 +66,7 @@ Retros.allow(
     #Owner, collaborator
     #return retro.user_id == user_id or _.some(retro.collaborators, (user) -> user == user_id)
     return true
-  remove: (user_id, doc) ->
+  remove: (user_id, retro) ->
     #Owner or admin
     return retro.user_id == user_id or Meteor.user().rights.admin? == true
 )
