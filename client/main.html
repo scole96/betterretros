@@ -17,12 +17,10 @@
         <div class="span6 headerSelect">
           <a href="/"><img class="pull-left" src="/logo.png" width="250" height="77"/></a>
         </div>
-        <div class="span3">
-          {{ yield "menu"}}
-        </div>
         <div class="span6">
-          <span class="pull-right">{{loginButtons align="right"}}</span>
-          <span class="pull-right">{{>team}}</span>
+          <a href="/team">
+            <span class="pull-right">{{loginButtons align="right"}}</span>
+          </a>
         </div>
       </div>
       {{ yield }}

@@ -14,19 +14,6 @@ Meteor.autosubscribe( () ->
   Meteor.subscribe("userData")
   Meteor.subscribe("allUserData");
 )
-# Deps.autorun(() ->
-#   if Meteor.user()
-#     console.log "got a user"
-#     current_team_id = Meteor.user()?.session?.current_team_id
-#     if current_team_id
-#       console.log "got a team"
-#       team = Teams.findOne(current_team_id)
-#       if team.current_retro_id
-#         Session.set('retro_id', team.current_retro_id)
-#         retro = Retros.findOne(team.current_retro_id)
-#         if retro and retro.current_activity_id
-#           Session.set('activity_id', retro.current_activity_id)
-# )
 
 Deps.autorun(() -> 
   teams = Meteor.user()?.teams
@@ -68,20 +55,16 @@ Handlebars.registerHelper('getCurrentRetroName', () ->
 )
 Handlebars.registerHelper('isRetroLeader', () ->
   retro_id = Session.get("retro_id")
-  console.log "HB-isRetroLeader: retro: #{retro_id} and user: #{Meteor.userId()}"
   if retro_id and Meteor.userId()
     leader = Retros.findOne(retro_id)?.leader_id
-    console.log "leader is #{leader}"
     return leader == Meteor.userId()
   false
 )
 
 @isRetroLeader = () ->
   retro_id = Session.get("retro_id")
-  console.log "isRetroLeader: retro: #{retro_id} and user: #{Meteor.userId()}"
   if retro_id and Meteor.userId()
     leader = Retros.findOne(retro_id)?.leader_id
-    console.log "leader is #{leader}"
     return leader == Meteor.userId()
   false
 
@@ -92,9 +75,11 @@ Handlebars.registerHelper('getCurrentActivityName', () ->
   else
     ""
 )
-
+Handlebars.registerHelper('getTeamName', (id) ->
+  Teams.findOne(id)?.name
+)
 Handlebars.registerHelper('getUserName', (id) ->
-  Meteor.users.findOne(id)?.profile.initials
+  Meteor.users.findOne(id)?.profile.name
 )
 
 Handlebars.registerHelper('inspect', (object) ->
@@ -124,9 +109,9 @@ Template.inviteRequest.events(
     FlashMessages.sendSuccess("Thanks for your interest. We'll be in touch soon.")
 )
 
-Template.retro.showActivity = (data) ->
-  template_name = data.definition.template
-  Template[template_name](data)
+Template.retro.showActivity = (activity) ->
+  template_name = activity.definition.template
+  Template[template_name](activity)
 
 
 ##### Tracking selected list in URL #####
@@ -139,15 +124,13 @@ Router.configure
 Router.map ->
   @route "teamManagement", path: "/team"
   @route "admin", path: "/admin"
-  @route "retro", path: "/", controller: "RetroController"
   @route "retro", path: "/retro/:retro_id", controller: "RetroController"
   @route "retro", path: "/activity/:activity_id", controller: "RetroController"
+  @route "retros", path: "/", data: -> retros: Retros.find()
+  @route "retros", path: "/retros", data: -> retros: Retros.find {}, sort: {create_date: 0}
 
 class @RetroController extends RouteController 
   template: 'retro'
-
-  renderTemplates: 
-    'selection': to: 'menu'
   
   data: -> 
     console.log "in data with retroId: #{@params.retro_id} and activityId: #{@params.activity_id}"
@@ -161,8 +144,6 @@ class @RetroController extends RouteController
       data.activity = Activities.findOne activity_id
     else if retro_id
       data.retro = Retros.findOne retro_id
-    
-    console.log data
 
     if !data.retro and !data.activity
       console.log "trouble, we got neither retros or activity"
