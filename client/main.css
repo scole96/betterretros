@@ -41,15 +41,8 @@ div#actionItemsPanel {
 }
 div#retroNav {
   padding: 5px;
-  position:fixed;
-  top: 25%;
-  left:0px;
-}
-div#retroNav ul {
-  
 }
 div.sideLabel {
-  height: 1em;
   width: 8em;
   padding: 5px;
   text-align: center;
@@ -60,8 +53,8 @@ div.sideLabelLeft {
   left:-50px;
 }
 div.sideLabelRight {
-  right:-30px;
-  bottom: 100px;
+  right:-40px;
+  height: 1em;
 }
 .rotate {
   -webkit-transform: rotate(-90deg);

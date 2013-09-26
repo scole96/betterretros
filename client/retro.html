@@ -5,23 +5,26 @@
   <div id="retroExpander" class="rotate sideLabel sideLabelLeft">
     <btn class="btn btn-primary">Retrospectives</btn>
   </div>
-  {{>retroNav}}
-  <div class="row-fluid">
+  {{>newRetro}}
+
+  <div class="row">
+    <div id="retroNavPanel" class="hide">
+      {{>retroNav}}
+    </div>
     <div id="mainPanel" class="span10">
       {{>activityNav}}
       {{#with activity}}
         {{{showActivity this}}}
       {{/with}}
     </div>
-    <div id="actionItemsPanel" class="span2 well well-large">
+    <div id="actionItemsPanel" class="span2">
       {{>actionItems}}
     </div>
   </div>
-  {{>newRetro}}
 </template>
 
 <template name="retroNav">
-  <div id="retroNav" class="hide">
+  <div class="well">
     <ul class="nav nav-list">
       {{#if isRetroLeader}}
         <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>

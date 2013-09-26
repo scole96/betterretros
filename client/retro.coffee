@@ -24,11 +24,19 @@ Template.retro.events(
     $('#mainPanel').removeClass("span12").addClass("span8")
     $('#actionItemsPanel').removeClass("span2").addClass("span4")
   'mouseenter #retroExpander' : (event, template) ->
-    $('#retroNav').removeClass("hide")
+    if $('#mainPanel').hasClass("span10")
+      $('#mainPanel').removeClass("span10").addClass("span8")
+    else
+      $('#mainPanel').removeClass("span12").addClass("span10")
+    $('#retroNavPanel').addClass("span2").removeClass("hide")
     $('#retroExpander').addClass("hide")
-  'mouseleave #retroNav' : (event, template) ->
-    $('#retroNav').addClass("hide")
+  'mouseleave #retroNavPanel' : (event, template) ->
+    $('#retroNavPanel').addClass("hide").removeClass("span2")
     $('#retroExpander').removeClass("hide")
+    if $('#mainPanel').hasClass("span8")
+      $('#mainPanel').removeClass("span8").addClass("span10")
+    else
+      $('#mainPanel').removeClass("span10").addClass("span12")
 )
 
 Template.newRetro.events(
