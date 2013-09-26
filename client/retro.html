@@ -1,7 +1,42 @@
-<template name="activityTab">
+<template name="retro">
+  <div id="actionItemsExpander" class="hide rotate sideLabel sideLabelRight">
+    <btn class="btn btn-primary">Action Items</btn>
+  </div>
+  <div id="retroExpander" class="rotate sideLabel sideLabelLeft">
+    <btn class="btn btn-primary">Retrospectives</btn>
+  </div>
+  {{>retroNav}}
+  <div class="row-fluid">
+    <div id="mainPanel" class="span10">
+      {{>activityNav}}
+      {{#with activity}}
+        {{{showActivity this}}}
+      {{/with}}
+    </div>
+    <div id="actionItemsPanel" class="span2 well well-large">
+      {{>actionItems}}
+    </div>
+  </div>
+  {{>newRetro}}
+</template>
+
+<template name="retroNav">
+  <div id="retroNav" class="hide">
+    <ul class="nav nav-list">
+      {{#if isRetroLeader}}
+        <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
+      {{/if}}
+      {{#each retros}}
+        <li><a href="/retro/{{_id}}">{{name}}</a></li>
+      {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="activityNav">
   <div class="navbar">
     <div class="navbar-inner">
-      <a class="brand" href="/retros">{{retro.name}}</a>
+      <a class="brand">{{retro.name}}</a>
       <ul class="nav">
         {{#each activities}}
           <li class="{{isActive _id ../activity._id}}"><a href="/activity/{{_id}}" class="activityLink" data-id="{{_id}}">{{name}}</a></li>
@@ -11,6 +46,23 @@
         {{/if}}
       </ul>
     </div>
+  </div>
+</template>
+
+<template name="newRetro">
+  <div id="newRetroModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="new-retro-modal-label" aria-hidden="true">
+    <div class="modal-header">
+      <h3>New Retrospective</h3>
+    </div>    
+    <form id="newRetroForm">
+      <div class="modal-body">
+        <input type="text" id="newRetroTitle"  class="input-xlarge" placeholder="Title" required/>
+      </div>
+      <div class="modal-footer">
+        <a data-dismiss="modal" aria-hidden="true">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
   </div>
 </template>
 

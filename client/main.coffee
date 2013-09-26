@@ -53,6 +53,13 @@ Handlebars.registerHelper('getCurrentRetroName', () ->
   else
     ""
 )
+Handlebars.registerHelper('getCurrentActivityName', () ->
+  activity_id = Session.get("activity_id")
+  if activity_id
+    Activities.findOne(activity_id)?.name
+  else
+    ""
+)
 Handlebars.registerHelper('isRetroLeader', () ->
   retro_id = Session.get("retro_id")
   if retro_id and Meteor.userId()
@@ -68,13 +75,6 @@ Handlebars.registerHelper('isRetroLeader', () ->
     return leader == Meteor.userId()
   false
 
-Handlebars.registerHelper('getCurrentActivityName', () ->
-  activity_id = Session.get("activity_id")
-  if activity_id
-    Activities.findOne(activity_id)?.name
-  else
-    ""
-)
 Handlebars.registerHelper('getTeamName', (id) ->
   Teams.findOne(id)?.name
 )
@@ -86,32 +86,12 @@ Handlebars.registerHelper('inspect', (object) ->
   console.log object
 )
 
-Template.retro.events(
-  'mouseenter #actionItemsPanel' : (event, template) ->
-    if $('#actionItemsPanel').width()<200 and !$('#actionItemsPanel').hasClass("hide")
-      $('#actionItemsPanel').removeClass("span2").addClass("span4")
-      $('#mainPanel').removeClass("span10").addClass("span8")
-  'mouseleave #actionItemsPanel' : (event, template) ->
-    if $('#actionItemsPanel').hasClass("span4") and !$('#actionItemsPanel').hasClass("hide")
-      $('#actionItemsPanel').removeClass("span4").addClass("span2")
-      $('#mainPanel').removeClass("span8").addClass("span10")
-  'click .actionItemsExpander': (event, template) ->
-    $('.actionItemsExpander').addClass("hide")
-    $('#actionItemsPanel').removeClass("hide")
-    $('#mainPanel').removeClass("span12").addClass("span8")
-    $('#actionItemsPanel').removeClass("span2").addClass("span4")
-)
-
 Template.inviteRequest.events(
   'submit #emailForm' : (event, template) ->
     email = template.find("#email").value
     Meteor.call("inviteRequest", email)
     FlashMessages.sendSuccess("Thanks for your interest. We'll be in touch soon.")
 )
-
-Template.retro.showActivity = (activity) ->
-  template_name = activity.definition.template
-  Template[template_name](activity)
 
 
 ##### Tracking selected list in URL #####
@@ -126,8 +106,7 @@ Router.map ->
   @route "admin", path: "/admin"
   @route "retro", path: "/retro/:retro_id", controller: "RetroController"
   @route "retro", path: "/activity/:activity_id", controller: "RetroController"
-  @route "retros", path: "/", data: -> retros: Retros.find()
-  @route "retros", path: "/retros", data: -> retros: Retros.find {}, sort: {create_date: 0}
+  @route "retro", path: "/", controller: "RetroController"
 
 class @RetroController extends RouteController 
   template: 'retro'
@@ -135,18 +114,20 @@ class @RetroController extends RouteController
   data: -> 
     console.log "in data with retroId: #{@params.retro_id} and activityId: #{@params.activity_id}"
     data = {}
+    data.retros = Retros.find({}, sort: {create_date: 0}).fetch()
     retro_id = @params.retro_id
     activity_id = @params.activity_id
 
     if !retro_id and !activity_id
-      data.retro = Retros.findOne()
+      if data.retros.length > 0
+        data.retro = data.retros[0]
     else if activity_id
       data.activity = Activities.findOne activity_id
     else if retro_id
       data.retro = Retros.findOne retro_id
 
     if !data.retro and !data.activity
-      console.log "trouble, we got neither retros or activity"
+      console.log "first time user"
     else if !data.activity
       data.activity = Activities.findOne( retro_id: data.retro._id)
     else if !data.retro

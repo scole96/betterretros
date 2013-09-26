@@ -1,12 +1,9 @@
 div.headerSelect > ul {
   padding-left: 20px;
 }
-
-
 span.static-title {
   padding-left: 3em;
 }
-
 span.user-initals {
   color: black; 
   padding: 3px, 3px,3px,3px;
@@ -19,30 +16,18 @@ span.user-initals-0 {
 span.user-initals-1 {
   background-color: blue; 
 }
-li.activityItemRow {
-
-}
-a.activityItem {
-  
-}
 span.ai-actions a {
   padding-right: .5em;
-}
-
-div.activity-management {
-
 }
 div.activity-management-container {}
   margin-bottom: 1em;
 }
-
 a.owned {
   color: green !important;
 }
 a.not-owned{
   color: red !important;
 }
-
 span.owner{
   font-size: .5em;
   padding-right: 3px;
@@ -54,15 +39,29 @@ div#actionItemsPanel {
   padding-top: 5px;
   padding-bottom: 5px;
 }
-div.actionItemsExpander {
+div#retroNav {
+  padding: 5px;
+  position:fixed;
+  top: 25%;
+  left:0px;
+}
+div#retroNav ul {
+  
+}
+div.sideLabel {
   height: 1em;
   width: 8em;
   padding: 5px;
   text-align: center;
   position:fixed;
-  top: 25%;
-  bottom:100px;
-  right:-3em;
+  top: 50%;
+}
+div.sideLabelLeft {
+  left:-50px;
+}
+div.sideLabelRight {
+  right:-30px;
+  bottom: 100px;
 }
 .rotate {
   -webkit-transform: rotate(-90deg);

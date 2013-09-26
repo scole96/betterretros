@@ -4,7 +4,7 @@ Template.actionItems.actionItems = () ->
 Template.actionItems.events(
   'click #collapse' : (event, template) ->
     $('#actionItemsPanel').toggleClass("hide")
-    $('.actionItemsExpander').toggleClass("hide")
+    $('#actionItemsExpander').toggleClass("hide")
     $('#mainPanel').removeClass("span10").removeClass("span8").addClass("span12")
   'click .delete' : (event, template) ->
     _id = $(event.target).data('pk')
