@@ -2,13 +2,10 @@
   <div id="actionItemsExpander" class="hide rotate sideLabel sideLabelRight">
     <btn class="btn btn-primary">Action Items</btn>
   </div>
-  <div id="retroExpander" class="rotate sideLabel sideLabelLeft">
-    <btn class="btn btn-primary">Retrospectives</btn>
-  </div>
   {{>newRetro}}
 
   <div class="row">
-    <div id="retroNavPanel" class="hide">
+    <div id="retroNavPanel">
       {{>retroNav}}
     </div>
     <div id="mainPanel" class="span10">
@@ -24,15 +21,19 @@
 </template>
 
 <template name="retroNav">
-  <div class="well">
-    <ul class="nav nav-list">
-      {{#if isRetroLeader}}
-        <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
-      {{/if}}
-      {{#each retros}}
-        <li><a href="/retro/{{_id}}">{{name}}</a></li>
-      {{/each}}
-    </ul>
+  <div class="drawer">
+    <div class="drawer-content">
+      <h3>Retrospectives</h3>
+      <ul class="nav nav-list">
+        {{#if isRetroLeader}}
+          <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
+        {{/if}}
+        {{#each retros}}
+          <li><a href="/retro/{{_id}}">{{name}}</a></li>
+        {{/each}}
+      </ul>
+    </div>
+    <a class="toggle-thumb"></a>
   </div>
 </template>
 

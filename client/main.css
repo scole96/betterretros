@@ -73,3 +73,30 @@ div.sideLabelRight {
   /* Should be unset in IE9+ I think. */
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
+
+.toggle-thumb {
+  display: block;
+  width: 15px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #47a2ff;
+  transition: all .2s ease-in;
+}
+.toggle-thumb:hover {
+  background: #aed2ff;
+}
+.drawer {
+  position: fixed;
+  top: 0;
+  width: 215px;
+  height: 100%;
+  left: -200px;
+  background: rgba(255,255,255, .98);
+  z-index: 20;
+}
+
+.open.drawer {
+  left: 0;
+}

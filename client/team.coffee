@@ -1,54 +1,54 @@
 
-Template.active_users.getActiveUsers = () ->
-  retro_id = Session.get("retro_id")
-  retro = Retros.findOne(retro_id)
-  if retro and retro.active_users
-    Meteor.users.find(_id: $in: retro.active_users).fetch()
+# Template.active_users.getActiveUsers = () ->
+#   retro_id = Session.get("retro_id")
+#   retro = Retros.findOne(retro_id)
+#   if retro and retro.active_users
+#     Meteor.users.find(_id: $in: retro.active_users).fetch()
     
-Template.team.current = () ->
-  current_team_id = Meteor.user()?.session?.current_team_id
-  Teams.findOne(current_team_id)
+# Template.team.current = () ->
+#   current_team_id = Meteor.user()?.session?.current_team_id
+#   Teams.findOne(current_team_id)
 
-Template.team.userHasMultipleTeams = () ->
+# Template.team.isOwner = () ->
+#   this.leader == Meteor.userId()
+
+# Template.team.isCurrentTeamId = (id) ->
+#   current = Meteor.user()?.session?.current_team_id
+#   if current == id
+#       return "checked"
+#   return ""
+
+# Template.team.teamToEdit = () ->
+#   team_id = Meteor.user().session.current_team_id
+#   Teams.findOne(team_id)
+
+# Template.team.events (
+#  'click #createTeam' : (event, template) ->
+#     team_id = Teams.insert({name: "My Team", leader: Meteor.userId()})
+#     Meteor.users.update(Meteor.userId(), {$set:{'session.current_team_id': team_id}, $push: {teams: team_id}})
+#     Session.set("page", "teamManagement")
+#     Session.set("retro_id", null)
+#     Session.set("activity_id", null)
+#   'click #editTeam' : (event, template) ->
+#     Session.set("page", "teamManagement")
+#     Session.set("retro_id", null)
+#     Session.set("activity_id", null)
+#   'click .teamRadio' : (event, template) ->
+#     team_id = event.target.getAttribute('data-teamId')
+#     team_name = event.target.getAttribute('data-teamName')
+#     Meteor.users.update(Meteor.userId(), $set: {"session.current_team_id": team_id})
+#     Session.set("retro_id", null)
+#     Session.set("activity_id", null)
+# )
+
+Template.teamManagement.userHasMultipleTeams = () ->
   Meteor.user()?.teams?.length > 1
 
-Template.team.isOwner = () ->
-  this.leader == Meteor.userId()
-
-Template.team.isCurrentTeamId = (id) ->
-  current = Meteor.user()?.session?.current_team_id
-  if current == id
-      return "checked"
-  return ""
-
-Template.team.usersTeams = () ->
+Template.teamManagement.teams = () ->
   teams = Meteor.user()?.teams
   console.log "teams: " + teams
   if teams
-    Teams.find({_id: {$in:teams}})
-
-Template.team.teamToEdit = () ->
-  team_id = Meteor.user().session.current_team_id
-  Teams.findOne(team_id)
-
-Template.team.events (
- 'click #createTeam' : (event, template) ->
-    team_id = Teams.insert({name: "My Team", leader: Meteor.userId()})
-    Meteor.users.update(Meteor.userId(), {$set:{'session.current_team_id': team_id}, $push: {teams: team_id}})
-    Session.set("page", "teamManagement")
-    Session.set("retro_id", null)
-    Session.set("activity_id", null)
-  'click #editTeam' : (event, template) ->
-    Session.set("page", "teamManagement")
-    Session.set("retro_id", null)
-    Session.set("activity_id", null)
-  'click .teamRadio' : (event, template) ->
-    team_id = event.target.getAttribute('data-teamId')
-    team_name = event.target.getAttribute('data-teamName')
-    Meteor.users.update(Meteor.userId(), $set: {"session.current_team_id": team_id})
-    Session.set("retro_id", null)
-    Session.set("activity_id", null)
-)
+    Teams.find(_id: $in:teams)
 
 Template.teamManagement.current = () ->
   current_team_id = Meteor.user()?.session?.current_team_id

@@ -1,50 +1,25 @@
-<template name="team">
-  {{#with current}}
-    <ul class="nav pull-left">
-      <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown">
-          {{name}}<b class="caret"></b>
-        </a> 
-        <ul class="dropdown-menu">
-          {{#if userHasMultipleTeams}}
-            <li class="usermenu-submenu">Teams:
-              <ul class="unstyled submenu" style="padding-left:20px">
-                {{#each usersTeams}}
-                  <li>
-                    <a class="teamRadio" data-teamId="{{_id}}" data-teamName="{{name}}">
-                      <input type="radio" value="{{_id}}" {{isCurrentTeamId _id}} />
-                      {{name}}
-                    </a>
-                  </li>
-                {{/each}}
-              </ul>
-            </li>
-            <li class="divider"><li>
-          {{/if}}
-          {{#if isOwner}}
-            <li><a href="/team">Manage {{name}}</a></li>
-          {{/if}}
-          {{#if currentUser.rights.admin}}
-            <li><a id="admin_link" href="/admin">Administration</a></li>
-          {{/if}}
-        </ul>
-      </li>
-    </ul>
-  {{/with}}
-</template>
+
 
 <template name="teamManagement">
+  {{#if userHasMultipleTeams}}
+    <select>
+      {{#each teams}}
+        <option value="{{_id}}">{{name}}</option>
+      {{/each}}
+    </select>
+  {{/if}}
+  
   {{#with current}}
     <div class="">
       <div class="">
-        <h3><a href="#" id="teamName" class="editable" data-type="text" data-pk="{{_id}}">{{name}} <i class="icon-pencil"></i></a></h3>
+        <h3><a href="#" id="teamName" class="editable" data-type="text" data-pk="{{_id}}">{{name}}</a></h3>
       </div>    
       <div class="">
         <div class="span6">
           <h4>Current Members:</h4>
           <ul>
             {{#each teamMembers}}
-              <li>{{profile.name}} - {{services.google.email}}</li>
+              <li>{{profile.name}} - {{services.google.email}}<i class="icon-trash" data-pk="{{_id}}"></i></li>
             {{/each}}
           </ul>
         </div>
@@ -52,7 +27,7 @@
           <h4>Open Invitations:</h4>
             <ul>
               {{#each invites}}
-                <li>{{this}}</li>
+                <li>{{this}}<i class="icon-trash" data-pk="{{_id}}"></i></li>
               {{/each}}
           </ul>
         </div>
