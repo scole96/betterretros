@@ -50,10 +50,13 @@ Template.teamManagement.teams = () ->
   if teams
     Teams.find(_id: $in:teams)
 
-Template.teamManagement.current = () ->
+Template.teamManagement.currentTeam = () ->
   current_team_id = Meteor.user()?.session?.current_team_id
   Teams.findOne(current_team_id)
  
+Template.teamManagement.isCurrentUser = (id) ->
+  return Meteor.userId() == id
+  
 Template.teamManagement.teamMembers = () ->
   team_id = this._id
   users = Meteor.users.find({teams: team_id})

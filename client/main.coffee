@@ -41,9 +41,9 @@ Handlebars.registerHelper('formatDate', (date, format) ->
   date.format(format)
 )
 
-Handlebars.registerHelper('email', () ->
-  if Meteor.user()
-    getEmail Meteor.user()
+Handlebars.registerHelper('email', (user) ->
+  if user
+    getEmail user
 )
 
 Handlebars.registerHelper('getCurrentRetroName', () ->
@@ -74,6 +74,12 @@ Handlebars.registerHelper('isRetroLeader', () ->
     leader = Retros.findOne(retro_id)?.leader_id
     return leader == Meteor.userId()
   false
+
+Handlebars.registerHelper('isTeamLeader', (team_id) ->
+  if Meteor.userId() and team_id
+    return Teams.findOne(team_id).leader == Meteor.userId()
+  false
+)
 
 Handlebars.registerHelper('getTeamName', (id) ->
   Teams.findOne(id)?.name

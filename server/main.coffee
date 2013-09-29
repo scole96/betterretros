@@ -6,11 +6,13 @@ Accounts.onCreateUser((options, user) ->
   email = getEmail(user)
 
   invite = Invitations.findOne(email)
-  if email == "scole@wgen.net"
+  teams = Teams.find({invites: email}).fetch()
+  if email == "scole@wgen.net" or email == "dirtdog@gmail.com"
     #let him in
   else if invite
     Invitations.update(invite._id, $set: {joined: new Date()})
-    return true
+  else if teams?.length>0
+    #let em in, they've been asked to join a team
   else
     InviteRequests.insert({email:email, date: new Date(), method: "login"})
     throw new Meteor.Error(403, "You must be invited to join BetterRetros. We've put in a request for you. You should hear from us soon.")
@@ -27,15 +29,12 @@ Accounts.onCreateUser((options, user) ->
       initials = initials + name[0]
     user.profile.initials = initials
   user.teams = []
-  teams = Teams.find({invites: email}).fetch()
+
   console.log "Found " + teams.length + " teams to add new user to"
   for team in teams
-    console.log "Adding user to team:"
-    console.log team
+    console.log "Adding user to team: #{team.name} with id: #{team._id}"
     user.teams.push team._id
     Teams.update(team._id, {$pull: {invites: email}})
-    console.log "that team is now: "
-    console.log team
   console.log "user.teams is: "
   console.log user.teams
 

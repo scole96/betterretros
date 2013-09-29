@@ -8,35 +8,53 @@
       {{/each}}
     </select>
   {{/if}}
-  
-  {{#with current}}
-    <div class="">
-      <div class="">
+
+  {{#with currentTeam}}
+    <div class="row">
+      <div class="span12">
         <h3><a href="#" id="teamName" class="editable" data-type="text" data-pk="{{_id}}">{{name}}</a></h3>
       </div>    
-      <div class="">
-        <div class="span6">
-          <h4>Current Members:</h4>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <h4>Team Lead</h4>
+        {{getUserName leader}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="span6">
+        <h4>Current Members:</h4>
+        <ul>
+          {{#each teamMembers}}
+            <li>{{profile.name}} - {{email this}}
+              {{#if isTeamLeader ../_id}}
+                {{#unless isCurrentUser _id}}
+                  <i class="icon-trash" data-pk="{{_id}}"></i>
+                {{/unless}}
+              {{/if}}
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="span6">
+        <h4>Open Invitations:</h4>
           <ul>
-            {{#each teamMembers}}
-              <li>{{profile.name}} - {{services.google.email}}<i class="icon-trash" data-pk="{{_id}}"></i></li>
+            {{#each invites}}
+              <li>{{this}}
+                {{#if isTeamLeader ../_id}}
+                  <i class="icon-trash" data-pk="{{_id}}"></i>
+                {{/if}}
+              </li>
             {{/each}}
-          </ul>
-        </div>
-        <div class="span6">
-          <h4>Open Invitations:</h4>
-            <ul>
-              {{#each invites}}
-                <li>{{this}}<i class="icon-trash" data-pk="{{_id}}"></i></li>
-              {{/each}}
-          </ul>
-        </div>
-        <div class="span12">
-          <h4>Invite someone</h4>
-          <form id="addMember">
-            <input type="text" id="newMember"  class="input-xlarge"/>
-          </form>
-        </div>
+        </ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <h4>Invite someone</h4>
+        <form id="addMember">
+          <input type="text" id="newMember"  class="input-xlarge"/>
+        </form>
       </div>
     </div>
   {{/with}}
