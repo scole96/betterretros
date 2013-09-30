@@ -16,9 +16,6 @@ Accounts.onCreateUser((options, user) ->
   else
     InviteRequests.insert({email:email, date: new Date(), method: "login"})
     throw new Meteor.Error(403, "You must be invited to join BetterRetros. We've put in a request for you. You should hear from us soon.")
-  
-  if email == 'scole@wgen.net' 
-    user['rights'] = {'admin':true, 'leader':true}
 
   #We still want the default hook's 'profile' behavior.
   if options.profile

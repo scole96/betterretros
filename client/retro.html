@@ -25,7 +25,7 @@
     <div class="drawer-content">
       <h3>Retrospectives</h3>
       <ul class="nav nav-list">
-        {{#if isTeamLeader team_id}}
+        {{#if canManageRetros }}
           <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
         {{/if}}
         {{#each retros}}
