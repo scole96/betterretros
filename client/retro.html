@@ -3,7 +3,7 @@
     <btn class="btn btn-primary">Action Items</btn>
   </div>
   {{>newRetro}}
-
+  {{>newActivity}}
   <div class="row">
     <div id="retroNavPanel">
       {{>retroNav}}
@@ -48,10 +48,41 @@
           <li class="{{isActive _id ../activity._id}}"><a href="/activity/{{_id}}" class="activityLink" data-id="{{_id}}">{{name}}</a></li>
         {{/each}}
         {{#if isRetroLeader}}
-          <li><a id="newActivity" href="#newActivityModal" data-toggle="modal">+ New Activity </li>
+          <li><a href="#newActivityModal" data-toggle="modal">+ New Activity </li>
         {{/if}}
       </ul>
     </div>
+  </div>
+</template>
+
+<template name="newActivity">
+  <div id="newActivityModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="newActivity-modal-label" aria-hidden="true">
+    <div class="modal-header">
+      <h3>New Activity</h3>
+    </div>
+    <form id="newActivityForm">
+      <div class="modal-body">
+        {{>flashMessages}}
+        <input type="hidden" id="newActivityParent"/>
+        <label class="control-label" for="newActivityTitle">Title<span class="required">*</span></label>
+        <input type="text" id="newActivityTitle" class="input-xlarge" required/>
+        <label class="control-label" for="newActivityType">Activity Type<span class="required">*</span></label>
+        <select id="newActivityType">
+          <option value="madsSadsGlads">Glads, Sads, Mads</option>
+          <option value="plusesDeltas">Pluses and Deltas</option>
+          <option value="plusesDeltasKudos">Pluses, Deltas, Kudos</option>
+          <option value="startStopContinue">Start, Stop, Continue</options>
+          <option value="fourLs">The Four L's</option>
+          <option value="sailboat">Sailboat</option>
+          <option value="fiveWhys">Five Whys</option>
+          <option value="rootCause">Root Cause Analysis</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <a data-dismiss="modal" aria-hidden="true">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
   </div>
 </template>
 

@@ -140,20 +140,14 @@ Template.votableColumn.rendered = () ->
       ActivityItems.update(activity_item_id, $set: {name: newName})
   })
 
-Template.newActivity.events(
-  'submit #newActivityForm' : (event, template) ->
-    console.log "save new activity"
-    retro_id = Session.get("retro_id")
-    title = template.find("#newActivityTitle").value
-    type = template.find("#newActivityType").value
-    definition = definitions[type]
-    parent = Session.get("new-activity")?.parent
-    activity_id = Activities.insert({retro_id:retro_id, name: title, definition: definition, parent_activity_item_id: parent, create_date: new Date()})
-    Retros.update(retro_id, $set:current_activity_id:activity_id)
-    $('#newActivityModal').modal('hide')
-    Router.go( Router.path("retro", {retro_id: retro_id, activity_id: activity_id}))
-    return false
-)
+Template.votableColumns.rendered = () ->
+  $(this.find('#activityName')).editable( {
+    showbuttons: false,
+    success: (response, newName) ->
+      activity_id = $(this).data('pk')
+      Activities.update(activity_id, $set: {name: newName})
+  })
+
 Template.editActivity.events(    
   'submit #activityForm' : (event, template) ->
     console.log "save edit activity"
