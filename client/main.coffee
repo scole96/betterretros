@@ -134,10 +134,12 @@ class @RetroController extends RouteController
         data.activity = Activities.findOne activity_id
       else if retro_id
         data.retro = Retros.findOne retro_id
+        if !data.retro and data.retros.length >0
+          data.retro = data.retros[0]
 
       console.log data
       if !data.retro and !data.activity
-        console.log "got nothingt"
+        console.log "got nothing"
       else if !data.retro
         data.retro = Retros.findOne data.activity.retro_id
       else if !data.activity

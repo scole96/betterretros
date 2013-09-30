@@ -29,7 +29,9 @@
           <li><a href="#newRetroModal" data-toggle="modal">New Retro</a></li>
         {{/if}}
         {{#each retros}}
-          <li><a href="/retro/{{_id}}">{{name}}</a></li>
+          <li class="retroRow"><a href="/retro/{{_id}}">{{name}}{{#if canManageRetros}}
+            <i class="delete pull-right hide icon-trash" data-id="{{_id}}"></i>{{/if}}
+          </a></li>
         {{/each}}
       </ul>
     </div>

@@ -33,6 +33,16 @@ Template.retroNav.canManageRetros = () ->
   leader = Teams.findOne(team_id).leader
   return Meteor.userId()==leader
 
+Template.retroNav.events(
+  'click .delete' : (event, template) ->
+    event.preventDefault()
+    retro_id = $(event.target).data('id')
+    Retros.remove(retro_id)
+  'mouseenter .retroRow' : (event, template) ->
+    $(event.target).find('i.delete').show()
+  'mouseleave .retroRow' : (event, template) ->
+    $(event.target).find('i.delete').hide()
+)
 Template.newRetro.events(
  'submit #newRetroForm' : (event, template) ->
     title = template.find("#newRetroTitle").value
@@ -40,7 +50,4 @@ Template.newRetro.events(
     retro_id = Retros.insert({name: title, team_id: team_id, leader_id: Meteor.userId(), create_date: new Date()})
     $('#newRetroModal').modal("hide")
     Router.go("/retro/#{retro_id}")
-  'click .deleteRetro' : (event, template) ->
-    retro_id = $(event.target).data('id')
-    Retros.remove(retro_id)
 )
