@@ -1,42 +1,21 @@
 
-Leader Control
-  give leader ability to focus every one on an activity
-
+Eyes on this feature for leaders
 Show active users in a retro
- track who is logged in and to what retro
- show logged in users
+Alternate team/retro leaders
+Multiple Team support - change, create, delete
+Order retros by most recently created
 
-Alternate leaders
-
-Management Users
-  move to user name drop down menu with (Manage Team, My Profile, Administration, Logout)
-  view only team members for non-leader
-  everyone can send an invitation
-  can be on multiple teams
 
 Activity Features:
+  Review action items from previous Retro as first activity in new retro
+  re-vote function
   silent mode - each user adds privately
-  revote function
-  grouping function - group similar items together
-  show who wrote it
-  put the retro in the navbar as a link to manage retro page
+  grouping function - group similar items together - drag-n-drop
+  show creator/editors
 
-Manage Retros Page
-  list all retros
-  new retro
-  change retro titles
-  delete retro
-  open retro
-    list all activities
-    delete activity
-    change activity name
-
-Review action items from previous Retro
-  default activity for a new retro
-  pulls action items from previous retro
 New Activities: http://agileretrospectivewiki.org/
   fun intro questions
   Timeline
   layout for sailboat
   five why's that asks why each time
-  icons for the columns
+  custom icons for the columns for each activity
