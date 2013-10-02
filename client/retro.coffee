@@ -48,6 +48,8 @@ Template.newRetro.events(
     title = template.find("#newRetroTitle").value
     team_id = Meteor.user().session.current_team_id
     retro_id = Retros.insert({name: title, team_id: team_id, leader_id: Meteor.userId(), create_date: new Date()})
+    console.log "look up just created retro"
+    console.log Retros.findOne(retro_id)
     $('#newRetroModal').modal("hide")
     Router.go("/retro/#{retro_id}")
 )

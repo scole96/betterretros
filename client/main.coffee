@@ -16,12 +16,6 @@ Meteor.autosubscribe( () ->
 )
 
 Deps.autorun(() -> 
-  teams = Meteor.user()?.teams
-  if teams and teams.length >0
-    Meteor.subscribe('retros', teams)
-)  
-
-Deps.autorun(() -> 
   retro_id = Session.get("retro_id")
   if retro_id
     Meteor.subscribe('activities', retro_id)
@@ -116,6 +110,11 @@ Router.map ->
 
 class @RetroController extends RouteController 
   template: 'retro'
+  
+  waitOn: ->
+    result = []
+    if Meteor.user()?.teams?.length>0
+      Meteor.subscribe('retros', Meteor.user().teams)
   
   data: -> 
     console.log "in data with retroId: #{@params.retro_id} and activityId: #{@params.activity_id}"
