@@ -121,34 +121,28 @@ class @RetroController extends RouteController
     console.log "in data with retroId: #{@params.retro_id} and activityId: #{@params.activity_id}"
     data = {}
     data.retros = Retros.find({}, sort: {create_date: 0}).fetch()
-    if data.retros.length ==0
-      console.log "new user"
-    else
-      retro_id = @params.retro_id
-      activity_id = @params.activity_id
 
-      if !retro_id and !activity_id
-        if data.retros.length > 0
-          data.retro = data.retros[0]
-      else if activity_id
-        data.activity = Activities.findOne activity_id
-      else if retro_id
-        data.retro = Retros.findOne retro_id
-        if !data.retro and data.retros.length >0
-          data.retro = data.retros[0]
+    retro_id = @params.retro_id
+    activity_id = @params.activity_id
 
-      console.log data
-      if !data.retro and !data.activity
-        console.log "got nothing"
-      else if !data.retro
-        data.retro = Retros.findOne data.activity.retro_id
-      else if !data.activity
-        data.activity = Activities.findOne( retro_id: data.retro._id)
+    if retro_id
+      data.retro = Retros.findOne retro_id
+    if activity_id
+      data.activity = Activities.findOne activity_id
+      data.retro = Retros.findOne data.activity.retro_id
 
 
-      Session.set("retro_id", data.retro._id)
-      if data.activity
-        Session.set("activity_id", data.activity._id)
+    if !data.retro and data.retros.length >0
+      data.retro = data.retros[0]
+    else if !data.retro
+      console.log "No retro"
+    if !data.activity
+      data.activity = Activities.findOne( retro_id: data.retro._id)
+
+    console.log data
+    Session.set("retro_id", data.retro._id)
+    if data.activity
+      Session.set("activity_id", data.activity._id)
       
     return data
 

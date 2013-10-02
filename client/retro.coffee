@@ -63,6 +63,6 @@ Template.newActivity.events(
     activity_id = Activities.insert({retro_id:retro_id, name: title, definition: definition, parent_activity_item_id: parent, create_date: new Date()})
     Retros.update(retro_id, $set:current_activity_id:activity_id)
     $('#newActivityModal').modal('hide')
-    Router.go( Router.path("retro", {retro_id: retro_id, activity_id: activity_id}))
+    Router.go( "/activity/#{activity_id}" )
     return false
 )
