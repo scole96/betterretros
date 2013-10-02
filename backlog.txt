@@ -1,4 +1,5 @@
 
+Automatic approval of new account request, plus email notifications
 Eyes on this feature for leaders
 Show active users in a retro
 Alternate team/retro leaders
