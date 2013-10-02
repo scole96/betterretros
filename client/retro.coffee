@@ -1,3 +1,6 @@
+Template.retroWelcome.rendered = () ->
+  $('.drawer').toggleClass('open')
+
 Template.activityNav.activities = () ->
   if this.retro._id
     Activities.find({retro_id:this.retro._id})

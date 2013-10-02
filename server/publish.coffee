@@ -4,8 +4,9 @@ Meteor.publish('teams', () ->
 )
 
 @Retros = new Meteor.Collection("retros")
-Meteor.publish('retros', (teams) -> 
-  Retros.find({team_id: {$in: teams}})
+Meteor.publish('retros', () -> 
+  user = Meteor.users.findOne(this.userId)
+  Retros.find({team_id: user.session.current_team_id})
 )
 
 @ActionItems = new Meteor.Collection("actionItems")

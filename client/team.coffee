@@ -41,15 +41,24 @@
 #     Session.set("activity_id", null)
 # )
 
-Template.teamManagement.userHasMultipleTeams = () ->
-  Meteor.user()?.teams?.length > 1
-
-Template.teamManagement.teams = () ->
+Template.teamNav.teams = () ->
   teams = Meteor.user()?.teams
   console.log "teams: " + teams
   if teams
     Teams.find(_id: $in:teams)
 
+Template.teamNav.isActive = (id, id2) ->
+  return "active" if id==id2
+
+Template.newTeam.events(
+ 'submit #newTeamForm' : (event, template) ->
+    name = template.find("#newTeamName").value
+    team_id = Teams.insert({name: name, leader: Meteor.userId(), create_date: new Date()})
+    $('#newTeamModal').modal("hide")
+    Meteor.users.update(Meteor.userId(), {$set: {'session.current_team_id': team_id}, $addToSet: {teams: team_id}})
+
+    Router.go("/team/#{team_id}")
+)
 Template.teamManagement.currentTeam = () ->
   current_team_id = Meteor.user()?.session?.current_team_id
   Teams.findOne(current_team_id)

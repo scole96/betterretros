@@ -9,15 +9,25 @@
       {{>retroNav}}
     </div>
     <div id="mainPanel" class="span10">
-      {{>activityNav}}
-      {{#with activity}}
-        {{{showActivity this}}}
-      {{/with}}
+      {{#if retro}}
+        {{>activityNav}}
+        {{#with activity}}
+          {{{showActivity this}}}
+        {{/with}}
+      {{else}}
+        {{>retroWelcome}}
+      {{/if}}
     </div>
     <div id="actionItemsPanel" class="span2">
-      {{>actionItems}}
+      {{#if retro}}
+        {{>actionItems}}
+      {{/if}}
     </div>
   </div>
+</template>
+
+<template name="retroWelcome">
+  <p style="padding-left:200px">Welcome to BetterRetros. To get started create a new Retrospective</p>
 </template>
 
 <template name="retroNav">

@@ -102,6 +102,9 @@ Router.configure
 
 
 Router.map ->
+  @route "teamManagement", path: "/team/:team_id", data: ->
+    Meteor.users.update(Meteor.userId(), $set: 'session.current_team_id': @params.team_id)
+    Teams.findOne(@params.team_id)
   @route "teamManagement", path: "/team"
   @route "admin", path: "/admin"
   @route "retro", path: "/retro/:retro_id", controller: "RetroController"
@@ -112,9 +115,7 @@ class @RetroController extends RouteController
   template: 'retro'
   
   waitOn: ->
-    result = []
-    if Meteor.user()?.teams?.length>0
-      Meteor.subscribe('retros', Meteor.user().teams)
+    Meteor.subscribe('retros')
   
   data: -> 
     console.log "in data with retroId: #{@params.retro_id} and activityId: #{@params.activity_id}"
@@ -135,11 +136,12 @@ class @RetroController extends RouteController
       data.retro = data.retros[0]
     else if !data.retro
       console.log "No retro"
-    if !data.activity
+    else if !data.activity
       data.activity = Activities.findOne( retro_id: data.retro._id)
 
     console.log data
-    Session.set("retro_id", data.retro._id)
+    if data.retro
+      Session.set("retro_id", data.retro._id)
     if data.activity
       Session.set("activity_id", data.activity._id)
       
