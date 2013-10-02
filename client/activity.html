@@ -64,7 +64,11 @@
 
       {{/if}}
     {{/if}}
-    <h3><a href="#" id="activityName" class="editable" data-type="text" data-pk="{{_id}}">{{name}}</a></h3>
+    <h3><a href="#" id="activityName" class="editable" data-type="text" data-pk="{{_id}}">{{name}}
+      {{#if isRetroLeader }}
+        <i class="icon-trash" data-id="{{_id}}"></i>
+      {{/if}}
+      </a></h3>
     {{#if voting.enabled}}
       <dl class="dl-horizontal">
         <dt>My Votes Remaining</dt>
