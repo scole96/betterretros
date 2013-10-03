@@ -7,15 +7,11 @@ Accounts.onCreateUser((options, user) ->
 
   invite = Invitations.findOne(email)
   teams = Teams.find({invites: email}).fetch()
-  if email == "scole@wgen.net" or email == "dirtdog@gmail.com"
-    #let him in
-  else if invite
+  if invite
     Invitations.update(invite._id, $set: {joined: new Date()})
-  else if teams?.length>0
-    #let em in, they've been asked to join a team
-  else
-    InviteRequests.insert({email:email, date: new Date(), method: "login"})
-    throw new Meteor.Error(403, "You must be invited to join BetterRetros. We've put in a request for you. You should hear from us soon.")
+
+    # InviteRequests.insert({email:email, date: new Date(), method: "login"})
+    # throw new Meteor.Error(403, "You must be invited to join BetterRetros. We've put in a request for you. You should hear from us soon.")
 
   #We still want the default hook's 'profile' behavior.
   if options.profile
@@ -32,19 +28,18 @@ Accounts.onCreateUser((options, user) ->
     console.log "Adding user to team: #{team.name} with id: #{team._id}"
     user.teams.push team._id
     Teams.update(team._id, {$pull: {invites: email}})
-  console.log "user.teams is: "
-  console.log user.teams
 
   if user.teams.length==0
     console.log "Creating new team for new user"
-    user['rights'] = {'leader':true}
     team_name = user.profile.name + "'s Team"
-    team_id = Teams.insert({name: team_name, leader: user._id})
-    user.teams.push  team_id
+    team_id = Teams.insert({name: team_name, leader: user._id, create_date: new Date()})
+    user.teams.push team_id
   else
     team_id = user.teams[0]
 
-  user['session'] = {current_team_id: team_id}
+
+  user.session = {current_team_id: team_id}
+
   console.log "New user:"
   console.log user
   return user

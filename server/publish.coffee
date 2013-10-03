@@ -6,7 +6,8 @@ Meteor.publish('teams', () ->
 @Retros = new Meteor.Collection("retros")
 Meteor.publish('retros', () -> 
   user = Meteor.users.findOne(this.userId)
-  Retros.find({team_id: user.session.current_team_id})
+  if user?.session?.current_team_id
+    Retros.find({team_id: user.session.current_team_id})
 )
 
 @ActionItems = new Meteor.Collection("actionItems")
