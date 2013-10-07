@@ -24,9 +24,14 @@
             <li>{{profile.name}} - {{email this}}
               {{#if isTeamLeader ../_id}}
                 {{#unless isCurrentUser _id}}
-                  <i class="icon-trash" data-pk="{{_id}}"></i>
+                  <i class="delete-member icon-trash" data-team-id="{{../../../_id}}" data-user-id="{{../_id}}"></i>
                 {{/unless}}
+              {{else}}
+                {{#if isCurrentUser _id}}
+                  
+                {{/if}}
               {{/if}}
+
             </li>
           {{/each}}
         </ul>
@@ -37,7 +42,7 @@
             {{#each invites}}
               <li>{{this}}
                 {{#if isTeamLeader ../_id}}
-                  <i class="icon-trash" data-pk="{{_id}}"></i>
+                  <i class="delete-invite icon-trash" data-email="{{this}}" data-team-id="{{../../_id}}"></i>
                 {{/if}}
               </li>
             {{/each}}

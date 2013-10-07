@@ -43,7 +43,6 @@
 
 Template.teamNav.teams = () ->
   teams = Meteor.user()?.teams
-  console.log "teams: " + teams
   if teams
     Teams.find(_id: $in:teams)
 
@@ -62,28 +61,20 @@ Template.newTeam.events(
 Template.teamManagement.currentTeam = () ->
   current_team_id = Meteor.user()?.session?.current_team_id
   Teams.findOne(current_team_id)
- 
+
 Template.teamManagement.isCurrentUser = (id) ->
   return Meteor.userId() == id
   
 Template.teamManagement.teamMembers = () ->
   team_id = this._id
   users = Meteor.users.find({teams: team_id})
-  console.log "loading teamMembers"
-  console.log users.count()
-  console.log users.fetch()
   return users
 
 Template.teamManagement.events (
   'submit #addMember' : (event, template) ->
     email = template.find("#newMember").value
-    console.log "new member: " + email
     team_id = Meteor.user().session.current_team_id
-    console.log "team_id: " + team_id
     Meteor.call('findUserByEmail', email, (err, user_id) ->
-      console.log "findUserByEmail results:"
-      console.log err
-      console.log user_id
       if user_id
         Meteor.users.update(user_id, $push: {teams:team_id})
       else
@@ -91,6 +82,14 @@ Template.teamManagement.events (
       $('#newMember').val("")
     )
     return false
+  'click .delete-member' : (event, template) ->
+    user_id = $(event.target).data('user-id')
+    team_id = $(event.target).data('team-id')
+    Meteor.users.update(user_id, $pull: teams: team_id)
+  'click .delete-invite' : (event, template) ->
+    team_id = $(event.target).data('team-id')
+    email = $(event.target).data('email')
+    Teams.update(team_id, $pull: invites: email)
 )
 
 Template.teamManagement.rendered = () ->
